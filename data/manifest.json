@@ -1,0 +1,641 @@
+{
+  "snapshot": {
+    "generatedAt": "2026-07-10T16:11:43",
+    "scope": "Iron Bridge OPF Operations",
+    "scopeOptions": [
+      "Iron Bridge CHF & West Canning Basin",
+      "Iron Bridge OPF Maintenance",
+      "Iron Bridge OPF Operations",
+      "Iron Bridge OPF Shutdowns"
+    ],
+    "sourceCatalog": [
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_PerformanceSnapshotMetrics",
+        "Found": "Yes",
+        "Columns": 13,
+        "HierarchyFields": "ReportingDepartment",
+        "DateFields": "FirstDayOfCalendarMonth, LastDayOfCalendarMonth, FiscalMonthNo",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_KPISummaryDaily",
+        "Found": "Yes",
+        "Columns": 19,
+        "HierarchyFields": "ReportingDepartment, Tier05FullName",
+        "DateFields": "Date, FiscalMonthNo, FirstDayOfCalendarMonth, LastDayOfCalendarMonth",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_KPISummary",
+        "Found": "Yes",
+        "Columns": 94,
+        "HierarchyFields": "ReportingDepartment",
+        "DateFields": "FirstDayOfCalendarMonth, LastDayOfCalendarMonth, FiscalMonthNo, NumofDays_Rolling12, NumofDays_FYTD, NumofDays",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_KPIMonth",
+        "Found": "Yes",
+        "Columns": 58,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "FiscalMonthNo, ContractorKPI_NumberOfInternalAuditsMonth, ContractorKPI_NumberOfExternalAuditsMonth, NumberOfInjuryDays",
+        "KeyFields": "Key_OrganisationalUnit, Key_Vendor, Key_Location"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_KPIDay",
+        "Found": "Yes",
+        "Columns": 45,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "Date",
+        "KeyFields": "Key_OrganisationalUnit, Key_Vendor, Key_Location"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.LeadingSafetyIndexDaily",
+        "Found": "Yes",
+        "Columns": 12,
+        "HierarchyFields": "ReportingDepartment, ReportingTeam",
+        "DateFields": "Date",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.SafetyMapDashboard",
+        "Found": "Yes",
+        "Columns": 46,
+        "HierarchyFields": "Key_OrganisationalUnit, ReportingDepartment, Tier05FullName",
+        "DateFields": "Date",
+        "KeyFields": "Key_OrganisationalUnit, Key_Location"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.LeadingSafetyIndex",
+        "Found": "Yes",
+        "Columns": 29,
+        "HierarchyFields": "REPORTINGDEPARTMENT",
+        "DateFields": "FIRSTDAYOFCALENDARMONTH, LASTDAYOFCALENDARMONTH, FISCALMONTHNO, MEASURE_VALUE_ROLLING_12_MONTHS, HOURS_ROLLING_12_MONTHS, PREVIOUS_MONTH_MEASURE_VALUE_ROLLING_12_MONTHS",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_ExposureReductionSummary",
+        "Found": "Yes",
+        "Columns": 13,
+        "HierarchyFields": "ReportingDepartment",
+        "DateFields": "Date, FiscalMonthNo",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_RiskReductionSummary",
+        "Found": "Yes",
+        "Columns": 13,
+        "HierarchyFields": "ReportingDepartment",
+        "DateFields": "Date, FiscalMonthNo",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_Targets",
+        "Found": "Yes",
+        "Columns": 24,
+        "HierarchyFields": "REPORTINGDEPARTMENT",
+        "DateFields": "FiscalMonthNo, TRI Monthly Target",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Incident",
+        "Found": "Yes",
+        "Columns": 71,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "IncidentDate, ReportedDate, EnteredDate, SignOffDate, ManagerSignOffDate, SeniorSignOffDate",
+        "KeyFields": "Incident_BK, Key_Employee_ReportedBy, Key_Employee_ReportedTo, Key_Vendor_ResponsibleCompany, Key_OrganisationalUnit_Visited, Key_Projects"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Incident_History",
+        "Found": "Yes",
+        "Columns": 67,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "IncidentDate, ReportedDate, EnteredDate, SignOffDate, ManagerSignOffDate, SeniorSignOffDate",
+        "KeyFields": "Incident_BK, Key_Employee_ReportedBy, Key_Employee_ReportedTo, Key_Vendor_ResponsibleCompany, Key_OrganisationalUnit_Visited, Key_Employee_IncidentOwner"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Injury",
+        "Found": "Yes",
+        "Columns": 57,
+        "HierarchyFields": "None identified",
+        "DateFields": "IncidentDate, EnteredDate, DaysintoRoster, PrecautionaryDutiesFromDate, PrecautionaryDutiesToDate, DeclarationDate",
+        "KeyFields": "Injury_BK, Key_Incident, Key_Vendor_ResponsibleCompany, Key_InjuryMechanism"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "EDW.SELFSERVICE.SMH_IncidentDetails",
+        "Found": "Yes",
+        "Columns": 11,
+        "HierarchyFields": "None identified",
+        "DateFields": "IncidentDate",
+        "KeyFields": "Incident_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_IncidentClassification",
+        "Found": "Yes",
+        "Columns": 2,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Incident_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_IncidentCriticalControlTypes",
+        "Found": "Yes",
+        "Columns": 2,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Incident_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Incident_to_CriticalControlMonitoring_History",
+        "Found": "Yes",
+        "Columns": 4,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Incident_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Incident_to_Classification_History",
+        "Found": "Yes",
+        "Columns": 4,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Incident_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_Incident_Injury",
+        "Found": "Yes",
+        "Columns": 57,
+        "HierarchyFields": "Key_OrganisationalUnit, ReportingDepartment, Tier05FullName",
+        "DateFields": "IncidentDate, IncidentTimeofDay, FirstDayOfCalendarMonth, LastDayOfCalendarMonth, FiscalMonthNo, FiscalYearMonth",
+        "KeyFields": "Incident_BK, Key_OrganisationalUnit, Injury_BK, Key_Incident_Vendor_ResponsibleCompany, Key_Injury_Vendor_ResponsibleCompany, Key_Location"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Risk_to_Incident_History",
+        "Found": "Yes",
+        "Columns": 5,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Risk_to_Incident_BK, Key_Risk, Key_Incident"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Risk_to_Incident",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Risk_to_Incident_BK, Key_Risk, Key_Incident"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Injury_History",
+        "Found": "Yes",
+        "Columns": 57,
+        "HierarchyFields": "None identified",
+        "DateFields": "IncidentDate, EnteredDate, DaysintoRoster, PrecautionaryDutiesFromDate, PrecautionaryDutiesToDate, DeclarationDate",
+        "KeyFields": "Injury_BK, Key_Incident, Key_Vendor_ResponsibleCompany, Key_InjuryMechanism"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Injury_to_InjuryNature",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Injury_to_InjuryNature_BK, Key_Injury, Key_InjuryNature"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Incident_to_Classification",
+        "Found": "Yes",
+        "Columns": 2,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Incident_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_FieldLeadership_Injury_ByTimeofDay",
+        "Found": "Yes",
+        "Columns": 18,
+        "HierarchyFields": "ReportingDepartment, Tier05FullName",
+        "DateFields": "FirstDayOfCalendarMonth, LastDayOfCalendarMonth, FiscalMonthNo, FiscalYearMonth, TimeOfDay",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Injury_to_BodilyLocation",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Injury_to_BodilyLocation_BK, Key_Injury, Key_BodilyLocation"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.InjuryMechanism",
+        "Found": "Yes",
+        "Columns": 8,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "InjuryMechanism_BK"
+      },
+      {
+        "Domain": "Incident",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.InjuryTypeTimeFrame",
+        "Found": "Yes",
+        "Columns": 11,
+        "HierarchyFields": "None identified",
+        "DateFields": "DaysToAchieve",
+        "KeyFields": "InjuryTypeTimeFrame_BK"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Behaviour",
+        "Found": "Yes",
+        "Columns": 9,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Behaviour_BK, Key_FieldLeadership"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.FieldLeadership",
+        "Found": "Yes",
+        "Columns": 22,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "FieldLeadershipDate, EnteredDate, TimeOfDayConducted",
+        "KeyFields": "FieldLeadership_BK, Key_Employee_FieldLeadershipCoach, Key_OrganisationalUnit_Visited, Key_Employee_CreatedBy, Key_Vendor_ConductedOn, Key_Vendor_ConductedBy"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_FieldLeadershipDashboard",
+        "Found": "Yes",
+        "Columns": 19,
+        "HierarchyFields": "Key_OrganisationalUnit, ReportingDepartment, Tier05FullName",
+        "DateFields": "Date, TimeOfDay",
+        "KeyFields": "Key_OrganisationalUnit, Key_Location"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_Fieldleadership_REF",
+        "Found": "Yes",
+        "Columns": 180,
+        "HierarchyFields": "Key_OrganisationalUnit, Key_OrganisationalUnit_Visited, ReportingDepartment, ReportingTeam, Tier05FullName",
+        "DateFields": "CompletionDate, DateRaised, DateUntil, DueDate, EnteredDate, FieldLeadershipDate",
+        "KeyFields": "Action_BK, Behaviour_BK, Employee_BK, FieldLeadership_BK, Key_Activity_SourceOfAction, Key_Audit_SourceOfAction"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.AtRiskBehaviour",
+        "Found": "Yes",
+        "Columns": 7,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Behaviour_BK, Key_FieldLeadership"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.AtRiskBehaviour_History",
+        "Found": "Yes",
+        "Columns": 9,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Behaviour_BK, Key_FieldLeadership"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.FieldLeadershipTeam_History",
+        "Found": "Yes",
+        "Columns": 10,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "FieldLeadership_BK, Employee_BK, Key_OrganisationalUnit_Visited"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_FieldLeadership",
+        "Found": "Yes",
+        "Columns": 29,
+        "HierarchyFields": "Key_OrganisationalUnit, ReportingDepartment, Tier05FullName",
+        "DateFields": "FieldLeadershipDate, FirstDayOfCalendarMonth, LastDayOfCalendarMonth, FiscalMonthNo, FiscalYearMonth, TimeOfDayConducted",
+        "KeyFields": "FieldLeadership_BK, Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_Behaviour",
+        "Found": "Yes",
+        "Columns": 8,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Behaviour_BK, Key_FieldLeadership"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.PositiveBehaviour",
+        "Found": "Yes",
+        "Columns": 4,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Behaviour_BK, Key_FieldLeadership"
+      },
+      {
+        "Domain": "Field Leadership",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.PositiveBehaviour_History",
+        "Found": "Yes",
+        "Columns": 6,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Behaviour_BK, Key_FieldLeadership"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action",
+        "Found": "Yes",
+        "Columns": 43,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "DueDate, OriginalDueDate, DateUntil, CompletionDate, DateRaised",
+        "KeyFields": "Action_BK, Key_Employee_AssignedBy, Key_Employee_CompletedBy, Key_Employee_Responsible, Key_Incident, Key_Employee_ApprovedBy"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action_History",
+        "Found": "Yes",
+        "Columns": 45,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "DueDate, OriginalDueDate, DateUntil, CompletionDate, DateRaised, EffectiveFromDate",
+        "KeyFields": "Action_BK, Key_Employee_AssignedBy, Key_Employee_CompletedBy, Key_Employee_Responsible, Key_Incident, Key_Employee_ApprovedBy"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_ActionDay",
+        "Found": "Yes",
+        "Columns": 49,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "Date",
+        "KeyFields": "Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_ActionOverdueDay",
+        "Found": "Yes",
+        "Columns": 17,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "Date",
+        "KeyFields": "Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_ActionsOpenDueDateExt",
+        "Found": "Yes",
+        "Columns": 18,
+        "HierarchyFields": "ReportingDepartment, Tier05FullName",
+        "DateFields": "FiscalYearMonth, FiscalMonthNo, FirstDayOfCalendarMonth, LastDayOfCalendarMonth, DueDateExtendedTwoTimesorLess, DueDateExtendedThreeTimesorMore",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_ActionsOpenForMonths",
+        "Found": "Yes",
+        "Columns": 18,
+        "HierarchyFields": "ReportingDepartment, Tier05FullName",
+        "DateFields": "FiscalYearMonth, FiscalMonthNo, FirstDayOfCalendarMonth, LastDayOfCalendarMonth",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_ActionsOverDue",
+        "Found": "Yes",
+        "Columns": 21,
+        "HierarchyFields": "ReportingDepartment, Tier05FullName",
+        "DateFields": "FiscalYearMonth, FiscalMonthNo, FirstDayOfCalendarMonth, LastDayOfCalendarMonth",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action_to_Activity",
+        "Found": "Yes",
+        "Columns": 2,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Key_Action, Key_Activity"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action_to_Activity_History",
+        "Found": "Yes",
+        "Columns": 4,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Key_Action, Key_Activity"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action_to_Obligation",
+        "Found": "Yes",
+        "Columns": 2,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Key_Action, Key_Obligations"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action_to_Obligation_History",
+        "Found": "Yes",
+        "Columns": 4,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Key_Action, Key_Obligations"
+      },
+      {
+        "Domain": "Actions",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Action_to_TeamMember",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Action_to_TeamMembers_BK, Key_Action, Key_Employee"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Hazard",
+        "Found": "Yes",
+        "Columns": 37,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "HazardIdentificationDate, HazardReportedDate, EnteredDate, SignOffDate",
+        "KeyFields": "Hazard_BK, Key_Employee_AssessedBy, Key_Employee_HazardOwner, Key_Employee_ReportedTo, Key_Employee_SignedOffBy, Key_Employee_EnteredBy"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Hazard_History",
+        "Found": "Yes",
+        "Columns": 39,
+        "HierarchyFields": "Key_OrganisationalUnit_Visited",
+        "DateFields": "HazardIdentificationDate, HazardReportedDate, EnteredDate, SignOffDate, EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Hazard_BK, Key_Employee_AssessedBy, Key_Employee_HazardOwner, Key_Employee_ReportedTo, Key_Employee_SignedOffBy, Key_Employee_EnteredBy"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_HazardTypes",
+        "Found": "Yes",
+        "Columns": 2,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Hazard_BK"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Risk_to_Hazard",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Risk_to_Hazard_BK, Key_Risk, Key_Hazard"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Risk_to_Hazard_History",
+        "Found": "Yes",
+        "Columns": 5,
+        "HierarchyFields": "None identified",
+        "DateFields": "EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "Risk_to_Hazard_BK, Key_Risk, Key_Hazard"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.SIP_Hazard_WordCount",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "Hazard_BK"
+      },
+      {
+        "Domain": "Hazards",
+        "Table": "AA_STRATEGICPLANNING_REPORTING.Not found.STG_HAZARDS",
+        "Found": "No",
+        "Columns": 0,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Workplace Inspections",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.WorkplaceInspections",
+        "Found": "Yes",
+        "Columns": 20,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "CloseDate, InspectionDate",
+        "KeyFields": "WorkplaceInspections_BK, Key_Employee_AreaSuperintendent, Key_Employee_ClosedBy, Key_Employee_InspectedBy, Key_Employee_QuarryManager, Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Workplace Inspections",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.WorkplaceInspections_History",
+        "Found": "Yes",
+        "Columns": 23,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "CloseDate, InspectionDate, EffectiveFromDate, EffectiveToDate",
+        "KeyFields": "WorkplaceInspections_BK, Key_Employee_AreaSuperintendent, Key_Employee_ClosedBy, Key_Employee_InspectedBy, Key_Employee_QuarryManager, Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Workplace Inspections",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.HSE_WorkplaceInspections",
+        "Found": "Yes",
+        "Columns": 3,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "Date",
+        "KeyFields": "Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Workplace Inspections",
+        "Table": "AA_STRATEGICPLANNING_REPORTING.STG_BMS.WORKPLACE_INSPECTIONS",
+        "Found": "Yes",
+        "Columns": 18,
+        "HierarchyFields": "None identified",
+        "DateFields": "None identified",
+        "KeyFields": "WORKPLACEINSPECTIONS_BK"
+      },
+      {
+        "Domain": "Workplace Inspections",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.WorkplaceInspectionQuestionnaire",
+        "Found": "Yes",
+        "Columns": 13,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "None identified",
+        "KeyFields": "WorkplaceInspections_BK, Key_OrganisationalUnit"
+      },
+      {
+        "Domain": "Workplace Inspections",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.Coreplan_WorkplaceInspections",
+        "Found": "Yes",
+        "Columns": 9,
+        "HierarchyFields": "Key_OrganisationalUnit",
+        "DateFields": "InspectionDate, InspectionCompletionDate",
+        "KeyFields": "Key_OrganisationalUnit"
+      }
+    ]
+  },
+  "datasets": {
+    "itrs": [
+      "data/datasets/itrs.001.txt"
+    ],
+    "incidents": [
+      "data/datasets/incidents.001.txt"
+    ],
+    "fieldLeadership": [
+      "data/datasets/fieldLeadership.001.txt",
+      "data/datasets/fieldLeadership.002.txt",
+      "data/datasets/fieldLeadership.003.txt"
+    ],
+    "behaviours": [
+      "data/datasets/behaviours.001.txt",
+      "data/datasets/behaviours.002.txt",
+      "data/datasets/behaviours.003.txt",
+      "data/datasets/behaviours.004.txt"
+    ],
+    "actions": [
+      "data/datasets/actions.001.txt"
+    ],
+    "itrActions": [
+      "data/datasets/itrActions.001.txt"
+    ],
+    "hazards": [
+      "data/datasets/hazards.001.txt"
+    ],
+    "inspections": [
+      "data/datasets/inspections.001.txt"
+    ],
+    "kpiDaily": [
+      "data/datasets/kpiDaily.001.txt",
+      "data/datasets/kpiDaily.002.txt",
+      "data/datasets/kpiDaily.003.txt"
+    ],
+    "latestKpis": [
+      "data/datasets/latestKpis.001.txt"
+    ],
+    "targets": [
+      "data/datasets/targets.001.txt"
+    ]
+  }
+}
