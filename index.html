@@ -203,6 +203,10 @@
     .lsi-var-bar { position:absolute; top:2px; height:18px; background:#168a8b; }
     .lsi-var-bar.neg { background:#c25432; }
     .lsi-insight { color:#222; font-size:17px; line-height:1.25; }
+    .lsi-type-pill { display:inline-block; margin-left:8px; padding:3px 7px; border-radius:999px; font-size:10px; font-weight:900; text-transform:uppercase; vertical-align:middle; cursor:help; }
+    .lsi-type-pill.promoter { background:#e8fff0; color:#087318; border:1px solid #9be8a8; }
+    .lsi-type-pill.detractor { background:#fff0ea; color:#b4252d; border:1px solid #f1b49c; }
+    .lsi-hover-hint { display:block; margin-top:3px; color:var(--muted); font-size:11px; font-weight:700; }
     .lsi-note { margin-top:10px; padding-left:10px; border-left:4px solid var(--green); color:var(--muted); font-size:12px; line-height:1.35; }
     .lsi-fy27 { margin-top:12px; border:1px solid #d8e5f2; background:#fbfdff; border-radius:6px; padding:12px; }
     .lsi-fy27 h3 { margin:0 0 10px; color:var(--ink); font-size:15px; }
@@ -1341,6 +1345,21 @@
         return score + (lsiSummaryKind(row) === "detractor" ? -contribution : contribution);
       }, 100);
     }
+    function latestIronBridgeLsiSummaryRows() {
+      const rows = (DATA.leadingSafetyIndexSummary || []).filter(row => cleanText(row.ReportingGroup).toLowerCase() === "iron bridge");
+      const latestDate = rows.map(row => simpleDate(row.Date)).filter(Boolean).sort().pop();
+      return latestDate ? rows.filter(row => simpleDate(row.Date) === latestDate) : [];
+    }
+    function lsiSummaryScoreAveraged(rows, period = "FYTD") {
+      const byScope = new Map();
+      rows.forEach(row => {
+        const key = lsiScopeKey(row);
+        if (!byScope.has(key)) byScope.set(key, []);
+        byScope.get(key).push(row);
+      });
+      const scores = [...byScope.values()].map(scopeRows => lsiSummaryScore(scopeRows, period)).filter(value => Number.isFinite(value));
+      return scores.length ? scores.reduce((sum, value) => sum + value, 0) / scores.length : null;
+    }
     function lsiSummaryByCategory(rows, period = "Rolling365") {
       const byCategory = new Map();
       rows.forEach(row => {
@@ -1533,59 +1552,93 @@
       if (delta < -0.5) return "down";
       return "flat";
     }
+    function lsiFytdLatestRows() {
+      const rows = selectedLsiSummaryRows();
+      const latestDate = rows.map(row => simpleDate(row.Date)).filter(Boolean).sort().pop();
+      return latestDate ? rows.filter(row => simpleDate(row.Date) === latestDate) : [];
+    }
+    function lsiScopeKey(row) {
+      return cleanText(row.ReportingSite) || cleanText(row.ReportingTeam) || cleanText(row.ReportingDepartment) || "Iron Bridge";
+    }
+    function lsiSummaryByCategoryAveraged(rows, period = "FYTD") {
+      const byScope = new Map();
+      rows.forEach(row => {
+        const key = lsiScopeKey(row);
+        if (!byScope.has(key)) byScope.set(key, []);
+        byScope.get(key).push(row);
+      });
+      const scopeCount = Math.max(1, byScope.size);
+      const byCategory = new Map();
+      byScope.forEach(scopeRows => {
+        lsiSummaryByCategory(scopeRows, period).forEach(item => {
+          const current = byCategory.get(item.category) || { contribution:0, sentences:new Set() };
+          current.contribution += item.contribution / scopeCount;
+          if (item.insight) current.sentences.add(item.insight);
+          byCategory.set(item.category, current);
+        });
+      });
+      return [...byCategory.entries()].map(([category, item]) => ({
+        category,
+        contribution:item.contribution,
+        kind:item.contribution < 0 ? "detractor" : "promoter",
+        insight:[...item.sentences][0] || ""
+      })).sort((a,b) => b.contribution - a.contribution);
+    }
+    function lsiCategoryExamples(category, rows, period = "FYTD") {
+      const valueField = period === "FYTD" ? "MeasureValue_RollingFYTD" : "Measure_Value_Rolling365";
+      const denominatorField = period === "FYTD" ? "Measure_Denominator_RollingFYTD" : "Measure_Denominator_Rolling365";
+      const matches = rows.filter(row => cleanText(row.MeasureGroup) === category).map(row => {
+        const contribution = lsiSummaryContribution(row, period);
+        const signed = lsiSummaryKind(row) === "detractor" ? -contribution : contribution;
+        return {
+          scope:lsiScopeKey(row),
+          name:cleanText(row.MeasureName || row.Measure),
+          kind:lsiSummaryKind(row),
+          value:numValue(row[valueField]),
+          denominator:numValue(row[denominatorField]),
+          target:numValue(row.Target),
+          contribution:signed,
+          sentence:cleanText(row.Sentence || row.CategorySentence)
+        };
+      }).filter(item => Math.abs(item.contribution) > 0 || item.value > 0).sort((a,b) => Math.abs(b.contribution) - Math.abs(a.contribution)).slice(0,10);
+      if (!matches.length) return "No FYTD contributing examples recorded for this category.";
+      return matches.map(item => `${item.scope}: ${item.name} (${item.kind}) - FYTD value ${formatWhole(item.value)}; denominator ${formatWhole(item.denominator)}; target ${formatRate(item.target,1)}; contribution ${formatRate(item.contribution,1)}${item.sentence ? ". " + item.sentence : ""}`).join("\n");
+    }
     function lsiMonthlySummaryHtml() {
-      const range = lsiMonthRange();
-      const summaryRows = selectedFytdLsiSummaryRows();
-      if (!summaryRows.length) return "";
-      const byMonthRaw = new Map();
-      summaryRows.forEach(row => {
-        const d = simpleDate(row.Date);
-        if (!d) return;
-        const month = d.slice(0,7);
-        if (!range.months.includes(month)) return;
-        if (!byMonthRaw.has(month)) byMonthRaw.set(month, []);
-        byMonthRaw.get(month).push(row);
-      });
-      const months = [...byMonthRaw.keys()].sort();
-      if (!months.length) return "";
-      const byMonthCategory = new Map(months.map(month => [month, lsiSummaryByCategory(byMonthRaw.get(month), "Rolling365")]));
-      const trendPoints = months.map(month => {
-        const categories = byMonthCategory.get(month) || [];
-        const promoters = categories.filter(item => item.contribution > 0).reduce((sum,item) => sum + item.contribution, 0);
-        const detractors = Math.abs(categories.filter(item => item.contribution < 0).reduce((sum,item) => sum + item.contribution, 0));
-        return { month, promoters, detractors, lsi: 100 + promoters - detractors };
-      });
-      const latestMonth = months[months.length - 1];
-      const latestDate = byMonthRaw.get(latestMonth).map(row => simpleDate(row.Date)).filter(Boolean).sort().pop();
-      const latestPoint = trendPoints[trendPoints.length - 1];
-      const latestCategories = (byMonthCategory.get(latestMonth) || []).sort((a,b) => b.contribution - a.contribution);
+      const latestRows = lsiFytdLatestRows();
+      if (!latestRows.length) return "";
+      const latestDate = latestRows.map(row => simpleDate(row.Date)).filter(Boolean).sort().pop();
+      const latestDateLabel = latestDate ? toDate(latestDate).toLocaleDateString("en-AU", { day:"2-digit", month:"short", year:"2-digit" }) : "Latest";
+      const monthsForTrend = [...new Set(selectedLsiSummaryRows().map(row => simpleDate(row.Date)).filter(Boolean).map(date => date.slice(0,7)))].sort();
+      const byMonthCategory = new Map(monthsForTrend.map(month => {
+        const monthRows = selectedLsiSummaryRows().filter(row => simpleDate(row.Date)?.slice(0,7) === month);
+        const lastDate = monthRows.map(row => simpleDate(row.Date)).filter(Boolean).sort().pop();
+        return [month, lsiSummaryByCategoryAveraged(monthRows.filter(row => simpleDate(row.Date) === lastDate), "FYTD")];
+      }));
+      const latestCategories = lsiSummaryByCategoryAveraged(latestRows, "FYTD");
       const maxAbs = Math.max(...latestCategories.map(item => Math.abs(item.contribution)), 1);
       const rows = latestCategories.map(item => {
         const trend = lsiCategoryTrend(item.category, byMonthCategory);
-        const arrow = trend === "up" ? "?" : trend === "down" ? "?" : "?";
+        const arrow = trend === "up" ? "Up" : trend === "down" ? "Down" : "Flat";
         const arrowClass = trend === "up" ? "up" : trend === "down" ? "down" : "";
         const width = Math.max(2, Math.abs(item.contribution) / maxAbs * 50);
         const style = item.contribution >= 0
           ? `left:50%; width:${width}%;`
           : `right:50%; width:${width}%;`;
         const insight = item.insight || defaultLsiInsight(item.category, item.contribution);
+        const examples = lsiCategoryExamples(item.category, latestRows, "FYTD");
+        const type = item.contribution < 0 ? "Detractor" : "Promoter";
+        const typeClass = item.contribution < 0 ? "detractor" : "promoter";
         return `<div class="lsi-cat-row">
-          <div class="lsi-cat-cell measure">${escapeHtml(item.category)}</div>
-          <div class="lsi-cat-cell"><div class="lsi-arrow ${arrowClass}">${escapeHtml(arrow)}</div></div>
-          <div class="lsi-cat-cell"><div class="lsi-variance"><div class="lsi-zero"></div><div class="lsi-var-bar ${item.contribution < 0 ? "neg" : ""}" style="${style}" title="${escapeHtml(formatRate(item.contribution,1))}"></div></div></div>
-          <div class="lsi-cat-cell lsi-insight">${escapeHtml(insight)}</div>
+          <div class="lsi-cat-cell measure">${escapeHtml(item.category)}<span class="lsi-type-pill ${typeClass}" title="${escapeHtml(examples)}">${escapeHtml(type)}</span></div>
+          <div class="lsi-cat-cell"><div class="lsi-arrow ${arrowClass}" title="3 month comparison: ${escapeHtml(arrow)}">${escapeHtml(arrow)}</div></div>
+          <div class="lsi-cat-cell"><div class="lsi-variance"><div class="lsi-zero"></div><div class="lsi-var-bar ${item.contribution < 0 ? "neg" : ""}" style="${style}" title="${escapeHtml(type)} FYTD variance: ${escapeHtml(formatRate(item.contribution,1))}"></div></div></div>
+          <div class="lsi-cat-cell lsi-insight" title="${escapeHtml(examples)}">${escapeHtml(insight)}<span class="lsi-hover-hint">Hover for FYTD contributing examples</span></div>
         </div>`;
       }).join("");
-      const latestDateLabel = latestDate ? toDate(latestDate).toLocaleDateString("en-AU", { day:"2-digit", month:"short", year:"2-digit" }) : shortMonthLabel(latestMonth);
       return `<section class="lsi-card"><div class="lsi-panel">
-        <div class="lsi-powerbi-head"><div class="lsi-powerbi-title">Health &amp; Safety &nbsp; | &nbsp; Leading Safety Index Summary</div><div class="lsi-powerbi-logo" aria-label="Fortescue logo mark"></div></div>
-        ${lsiPeriodControlHtml(range)}
-        <div class="lsi-summary-main">
-          <div class="lsi-gauge-card"><div class="lsi-gauge-title"><strong>Leading Safety Index</strong><span>${escapeHtml(latestDateLabel)}</span></div>${lsiGaugeSvg(latestPoint.lsi)}</div>
-          <div class="lsi-trend-card">${lsiLineChartSvg(trendPoints)}</div>
-        </div>
         <div class="lsi-category-card">
-          <h3 class="lsi-category-title">Performance By Category</h3>
+          <h3 class="lsi-category-title">Leading Safety Index - FYTD Performance By Category <span class="muted">as at ${escapeHtml(latestDateLabel)}</span></h3>
           <div class="lsi-category-table">
             <div class="lsi-cat-head">Measure Category</div>
             <div class="lsi-cat-head">3 Month Comparison</div>
@@ -1619,7 +1672,9 @@
       const trifr = ratePerMillion(triRolling, rollingHours);
       const sifr = ratePerMillion(siRolling, rollingHours);
       const cifr = ratePerMillion(ciRolling, rollingHours);
-      const lsi = lsiScore(lsiRows);
+      const lsiSummaryRows = latestIronBridgeLsiSummaryRows();
+      const fytdLsi = lsiSummaryRows.length ? lsiSummaryScoreAveraged(lsiSummaryRows, "FYTD") : null;
+      const lsi = fytdLsi === null ? lsiScore(lsiRows) : fytdLsi;
       const sourceDate = [latestKpiDate, latestLsiDate].filter(Boolean).sort().pop() || "Not recorded";
       return `<section class="performance-card"><h2>Iron Bridge Performance Rates</h2><div class="performance-panel">
         <div class="performance-hero">
@@ -1642,10 +1697,10 @@
             <div class="perf-sub">Significant incident frequency rate across Iron Bridge.</div>
           </article>
           <article class="perf-metric lsi">
-            <div class="perf-kicker">Rolling 12 month</div>
+            <div class="perf-kicker">FYTD</div>
             <div class="perf-value">${formatRate(lsi, 1)}</div>
             <div class="perf-label">LSI</div>
-            <div class="perf-sub">Leading safety index from weighted activity measures.</div>
+            <div class="perf-sub">FYTD leading safety index from weighted activity measures.</div>
           </article>
         </div>
         <div class="performance-context">
