@@ -165,27 +165,44 @@
     .perf-chip-row { display:flex; flex-wrap:wrap; gap:6px; }
     .perf-chip { display:inline-flex; align-items:center; min-height:26px; padding:4px 8px; border:1px solid #cfe1f4; background:white; color:var(--ink); border-radius:999px; font-size:11px; font-weight:800; }
     .lsi-card { padding-bottom:18px; }
-    .lsi-panel { border:1px solid var(--line); background:linear-gradient(180deg,#fff,#f8fbff); border-radius:6px; padding:14px; }
-    .lsi-top { display:grid; grid-template-columns:220px 1fr; gap:14px; align-items:stretch; margin-bottom:12px; }
-    .lsi-gauge { display:grid; place-items:center; min-height:170px; border:1px solid #d8e5f2; background:white; border-radius:6px; position:relative; overflow:hidden; }
-    .lsi-gauge::after { content:""; position:absolute; right:-44px; bottom:-44px; width:130px; height:130px; border-radius:999px; background:rgba(0,255,0,.10); }
-    .lsi-score { position:relative; z-index:1; color:var(--ink); font-size:54px; font-weight:900; line-height:1; }
-    .lsi-score span { display:block; margin-top:8px; color:var(--muted); font-size:12px; font-weight:800; text-transform:uppercase; }
-    .lsi-trend { border:1px solid #d8e5f2; background:white; border-radius:6px; padding:12px; }
-    .lsi-months { display:flex; gap:7px; align-items:end; height:116px; margin-top:8px; border-bottom:1px solid var(--line); padding:0 4px 4px; }
-    .lsi-month { flex:1; min-width:28px; display:grid; align-items:end; gap:4px; text-align:center; color:var(--muted); font-size:10px; }
-    .lsi-month-bar { width:100%; min-height:5px; background:linear-gradient(180deg,var(--green),#0cb94a); border-radius:4px 4px 0 0; }
-    .lsi-month.detractor .lsi-month-bar { background:linear-gradient(180deg,#ff6b35,#b4252d); }
-    .lsi-breakdown { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
-    .lsi-stack { border:1px solid #d8e5f2; border-radius:6px; background:white; padding:12px; }
-    .lsi-stack h3 { margin:0 0 10px; color:var(--ink); font-size:15px; }
-    .lsi-stack.promoter h3 { color:#008a18; }
-    .lsi-stack.detractor h3 { color:var(--red); }
-    .lsi-factor { display:grid; grid-template-columns:120px 1fr 52px; gap:8px; align-items:center; margin:8px 0; font-size:12px; }
-    .lsi-factor label { color:var(--ink); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .lsi-factor .bar-track { height:12px; }
-    .lsi-factor.detractor .bar-fill { background:var(--red); }
-    .lsi-factor small { color:var(--muted); font-weight:800; text-align:right; }
+    .lsi-panel { border:1px solid #d4d8de; background:#f3f3f3; border-radius:6px; padding:0; overflow:hidden; }
+    .lsi-powerbi-head { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:16px; align-items:center; background:var(--ink); color:#fff; padding:14px 18px; }
+    .lsi-powerbi-title { font-size:30px; line-height:1; font-weight:500; letter-spacing:.01em; text-transform:uppercase; }
+    .lsi-powerbi-logo { width:72px; height:72px; border:16px solid var(--green); border-radius:999px; }
+    .lsi-powerbi-controls { display:grid; grid-template-columns:260px 220px 1fr; gap:12px; align-items:end; background:var(--ink); color:#fff; padding:0 18px 16px; }
+    .lsi-powerbi-controls label { display:block; color:#fff; font-weight:800; font-size:13px; margin-bottom:6px; text-transform:uppercase; }
+    .lsi-powerbi-controls input,.lsi-powerbi-controls select { width:100%; min-height:36px; border:1px solid #bfc7d2; background:#fff; color:#333; padding:6px 9px; font-size:14px; }
+    .lsi-period-buttons { display:grid; grid-template-columns:repeat(4,110px); gap:8px; align-items:end; }
+    .lsi-period-buttons button { border:2px solid #2d2d2d; background:#d8d8d8; color:#111; min-height:34px; font-weight:700; cursor:pointer; }
+    .lsi-period-buttons button.active { background:#fff; }
+    .lsi-summary-main { display:grid; grid-template-columns:310px minmax(0,1fr); gap:0; border-top:1px solid #ddd; background:white; }
+    .lsi-gauge-card { background:#e9e9e9; padding:22px 22px 18px; }
+    .lsi-gauge-title { color:var(--ink); font-size:20px; font-weight:900; text-transform:uppercase; display:flex; justify-content:space-between; gap:10px; align-items:center; margin-bottom:18px; }
+    .lsi-gauge-title span { color:#64707d; font-weight:700; text-transform:none; }
+    .lsi-gauge-svg { display:block; width:100%; max-width:250px; margin:0 auto; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,.10); }
+    .lsi-trend-card { background:#fff; padding:22px 22px 16px; min-height:290px; }
+    .lsi-line-chart { width:100%; height:250px; display:block; overflow:visible; }
+    .lsi-chart-legend { display:grid; gap:8px; font-size:13px; color:#222; }
+    .lsi-legend-item { display:grid; grid-template-columns:45px auto; gap:7px; align-items:center; white-space:nowrap; }
+    .lsi-legend-line { height:0; border-top:3px solid var(--ink); }
+    .lsi-legend-line.target { border-top-style:dashed; }
+    .lsi-legend-line.promoter { border-color:#148b8b; }
+    .lsi-legend-line.detractor { border-color:#c45632; }
+    .lsi-category-card { background:#fff; border-top:28px solid #f0f0f0; padding:26px 28px 28px; }
+    .lsi-category-title { color:var(--ink); font-size:22px; font-weight:900; text-transform:uppercase; margin:0 0 24px; }
+    .lsi-category-table { display:grid; grid-template-columns:360px 210px minmax(360px,1fr) minmax(260px,1.2fr); border-top:1px solid #d0d0d0; }
+    .lsi-cat-head { padding:9px 10px 14px; color:#111; font-size:18px; border-bottom:1px solid #d8d8d8; }
+    .lsi-cat-row { display:contents; }
+    .lsi-cat-cell { min-height:34px; padding:8px 10px; border-bottom:1px solid #e2e2e2; display:flex; align-items:center; font-size:17px; }
+    .lsi-cat-cell.measure { border-right:2px solid #d8d8d8; }
+    .lsi-arrow { font-size:26px; font-weight:900; width:100%; text-align:center; color:#b88425; line-height:1; }
+    .lsi-arrow.up { color:#2d8050; }
+    .lsi-arrow.down { color:#be3428; }
+    .lsi-variance { position:relative; height:22px; width:100%; }
+    .lsi-zero { position:absolute; left:50%; top:0; bottom:0; border-left:2px dotted #1b8b8b; }
+    .lsi-var-bar { position:absolute; top:2px; height:18px; background:#168a8b; }
+    .lsi-var-bar.neg { background:#c25432; }
+    .lsi-insight { color:#222; font-size:17px; line-height:1.25; }
     .lsi-note { margin-top:10px; padding-left:10px; border-left:4px solid var(--green); color:var(--muted); font-size:12px; line-height:1.35; }
     .lsi-fy27 { margin-top:12px; border:1px solid #d8e5f2; background:#fbfdff; border-radius:6px; padding:12px; }
     .lsi-fy27 h3 { margin:0 0 10px; color:var(--ink); font-size:15px; }
@@ -1441,50 +1458,153 @@
         return d && range.months.includes(d.slice(0,7));
       });
     }
+    function lsiPeriodControlHtml(range) {
+      const min = LSI_MONTHS[0] || range.start;
+      const max = LSI_MONTHS[LSI_MONTHS.length - 1] || range.end;
+      const selectedLabel = selectedDepartmentLabel();
+      return `<div class="lsi-powerbi-controls">
+        <div><label>Reporting hierarchy</label><select disabled><option>${escapeHtml(selectedLabel)}</option></select></div>
+        <div><label>Date</label><input type="month" data-lsi-end-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.end)}" /></div>
+        <div><label>Select period</label><div class="lsi-period-buttons"><button type="button">Rolling 30</button><button type="button">Rolling 90</button><button type="button" class="active">Rolling 365</button><button type="button">FYTD</button></div></div>
+        <div style="grid-column:1 / -1; display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:4px;">
+          <div><label>Start month</label><input type="month" data-lsi-start-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.start)}" /></div>
+          <div><label>End month</label><input type="month" data-lsi-end-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.end)}" /></div>
+        </div>
+      </div>`;
+    }
+    function selectedDepartmentLabel() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      return selected.includes("All departments") ? "Fortescue Metals and Operations (Division) + Iron Bridge" : selected.map(displayDepartment).join(" + ");
+    }
+    function lsiGaugeSvg(score) {
+      const value = Math.max(0, Math.min(150, Number(score) || 0));
+      const angle = -135 + (value / 150) * 270;
+      const rad = angle * Math.PI / 180;
+      const x2 = 125 + Math.cos(rad) * 82;
+      const y2 = 135 + Math.sin(rad) * 82;
+      return `<svg class="lsi-gauge-svg" viewBox="0 0 250 220" role="img" aria-label="Leading Safety Index gauge">
+        <path d="M45 160 A90 90 0 1 1 205 160" fill="none" stroke="#cfd3d7" stroke-width="28" />
+        <path d="M173 62 A90 90 0 0 1 205 160" fill="none" stroke="#138b8b" stroke-width="28" />
+        <g stroke="#73787e" stroke-width="3">${[-135,-90,-45,0,45,90,135].map(a => { const r=a*Math.PI/180; const x1=125+Math.cos(r)*74; const y1=135+Math.sin(r)*74; const x=125+Math.cos(r)*92; const y=135+Math.sin(r)*92; return `<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }).join("")}</g>
+        <text x="62" y="176" font-size="14" fill="#333">0.0</text>
+        <text x="178" y="176" font-size="14" fill="#333">150.0</text>
+        <line x1="125" y1="135" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#182a52" stroke-width="8" stroke-linecap="round" />
+        <circle cx="125" cy="135" r="19" fill="#182a52" />
+        <text x="125" y="207" text-anchor="middle" font-size="34" fill="#111">${formatRate(score,1)}</text>
+      </svg>`;
+    }
+    function lsiLineChartSvg(points) {
+      if (!points.length) return `<div class="muted">No LSI trend data available for selected period.</div>`;
+      const w = 980, h = 260, ml = 46, mr = 120, mt = 22, mb = 36;
+      const allValues = points.flatMap(p => [p.lsi, p.promoters, p.detractors, 100]).filter(v => Number.isFinite(v));
+      const min = Math.min(0, ...allValues) * .96;
+      const max = Math.max(150, ...allValues) * 1.04;
+      const x = i => ml + (points.length === 1 ? 0 : i * (w - ml - mr) / (points.length - 1));
+      const y = v => mt + (max - v) * (h - mt - mb) / (max - min || 1);
+      const path = key => points.map((p,i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(p[key]).toFixed(1)}`).join(" ");
+      const ticks = [50,100,150].filter(t => t >= min && t <= max);
+      const monthLabels = points.filter((p,i) => i === 0 || i === points.length - 1 || i % Math.max(1, Math.ceil(points.length/5)) === 0);
+      return `<svg class="lsi-line-chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="LSI rolling trend">
+        <rect x="0" y="0" width="${w}" height="${h}" fill="#fff" />
+        ${ticks.map(t => `<line x1="${ml}" y1="${y(t).toFixed(1)}" x2="${w-mr}" y2="${y(t).toFixed(1)}" stroke="#ddd" stroke-dasharray="2 6"/><text x="${ml-10}" y="${(y(t)+4).toFixed(1)}" text-anchor="end" font-size="14" fill="#222">${t}</text>`).join("")}
+        <path d="M${ml},${y(100).toFixed(1)} L${w-mr},${y(100).toFixed(1)}" stroke="#1e3767" stroke-width="3" stroke-dasharray="8 8" fill="none" />
+        <path d="${path("lsi")}" stroke="#1e3767" stroke-width="3" fill="none" />
+        <path d="${path("promoters")}" stroke="#168a8b" stroke-width="3" fill="none" />
+        <path d="${path("detractors")}" stroke="#c45632" stroke-width="3" fill="none" />
+        ${monthLabels.map((p,i) => `<text x="${x(points.indexOf(p)).toFixed(1)}" y="${h-10}" text-anchor="middle" font-size="14" fill="#222">${escapeHtml(shortMonthLabel(p.month))}</text>`).join("")}
+        <g transform="translate(${w-mr+18},${mt+70})">
+          <g class="lsi-chart-legend">
+            <line x1="0" y1="0" x2="50" y2="0" stroke="#1e3767" stroke-width="3" stroke-dasharray="8 8"/><text x="58" y="5" font-size="15">Target</text>
+            <line x1="0" y1="28" x2="50" y2="28" stroke="#1e3767" stroke-width="3"/><text x="58" y="33" font-size="15">LSI</text>
+            <line x1="0" y1="56" x2="50" y2="56" stroke="#168a8b" stroke-width="3"/><text x="58" y="61" font-size="15">Promoters</text>
+            <line x1="0" y1="84" x2="50" y2="84" stroke="#c45632" stroke-width="3"/><text x="58" y="89" font-size="15">Detractors</text>
+          </g>
+        </g>
+      </svg>`;
+    }
+    function lsiCategoryTrend(category, byMonth) {
+      const months = [...byMonth.keys()].sort();
+      if (months.length < 2) return "flat";
+      const latest = byMonth.get(months[months.length - 1]).find(r => r.category === category)?.contribution || 0;
+      const compareMonth = months[Math.max(0, months.length - 4)];
+      const previous = byMonth.get(compareMonth).find(r => r.category === category)?.contribution || 0;
+      const delta = latest - previous;
+      if (delta > 0.5) return "up";
+      if (delta < -0.5) return "down";
+      return "flat";
+    }
     function lsiMonthlySummaryHtml() {
+      const range = lsiMonthRange();
       const summaryRows = selectedFytdLsiSummaryRows();
-      const rows = summaryRows.length ? summaryRows : selectedFytdLsiRows();
-      if (!rows.length) return "";
-      const usingSummary = summaryRows.length > 0;
-      const dateField = usingSummary ? "Date" : "LASTDAYOFCALENDARMONTH";
-      const latestDate = rows.map(row => simpleDate(row[dateField])).filter(Boolean).sort().pop();
-      const latestRows = rows.filter(row => simpleDate(row[dateField]) === latestDate);
-      const latestScore = usingSummary ? lsiSummaryScore(latestRows, "Rolling365") : lsiScore(latestRows);
-      const byMonth = new Map();
-      rows.forEach(row => {
-        const key = simpleDate(row[dateField]);
-        if (!key) return;
-        if (!byMonth.has(key)) byMonth.set(key, []);
-        byMonth.get(key).push(row);
+      if (!summaryRows.length) return "";
+      const byMonthRaw = new Map();
+      summaryRows.forEach(row => {
+        const d = simpleDate(row.Date);
+        if (!d) return;
+        const month = d.slice(0,7);
+        if (!range.months.includes(month)) return;
+        if (!byMonthRaw.has(month)) byMonthRaw.set(month, []);
+        byMonthRaw.get(month).push(row);
       });
-      const months = [...byMonth.entries()].sort(([a],[b]) => a.localeCompare(b)).map(([date, monthRows]) => [date, usingSummary ? lsiSummaryScore(monthRows, "Rolling365") : lsiScore(monthRows)]);
-      const maxScore = Math.max(...months.map(([,score]) => score), 1);
-      const monthBars = months.map(([date, score]) => `<div class="lsi-month ${score < latestScore ? "detractor" : ""}" title="${escapeHtml(lsiMonthLabel(date))}: ${formatRate(score,1)}"><div class="lsi-month-bar" style="height:${Math.max(6, score / maxScore * 100)}%"></div><span>${escapeHtml(lsiMonthLabel(date))}</span></div>`).join("");
-      const latestContrib = usingSummary ? lsiSummaryByCategory(latestRows, "Rolling365") : lsiContributionByMeasure(latestRows, true);
-      const promoters = latestContrib.filter(item => item.kind === "promoter").slice(0,8);
-      const detractors = latestContrib.filter(item => item.kind === "detractor").slice(0,8);
-      const factorRows = (items, cls) => {
-        const max = Math.max(...items.map(item => Math.abs(item.contribution)), 1);
-        return items.map(item => {
-          const label = item.label || item.category;
-          const category = item.category || "Other";
-          const insight = item.insight ? ` | ${item.insight}` : "";
-          return `<div class="lsi-factor ${cls}" title="${escapeHtml(label)} | ${escapeHtml(category)} | contribution ${formatRate(Math.abs(item.contribution),2)}${escapeHtml(insight)}"><label>${escapeHtml(category)}</label><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,Math.abs(item.contribution)/max*100)}%"></div></div><small>${formatRate(Math.abs(item.contribution),1)}</small></div>`;
-        }).join("") || `<div class="muted">No ${cls} measures recorded for this month.</div>`;
-      };
-      const period = latestDate ? toDate(latestDate).toLocaleDateString("en-AU", { month:"long", year:"numeric" }) : "selected month";
-      return `<section class="lsi-card"><h2>Monthly Leading Safety Index</h2><div class="lsi-panel">
-        ${lsiMonthControl()}
-        <div class="lsi-top">
-          <div class="lsi-gauge"><div class="lsi-score">${formatRate(latestScore,1)}<span>${escapeHtml(period)} LSI</span></div></div>
-          <div class="lsi-trend"><p class="chart-title">Monthly trend across selected LSI period</p><div class="lsi-months">${monthBars}</div><div class="lsi-note">Uses DA_HEALTHANDSAFETY.SELFSERVICE.LeadingSafetyIndexSummary, the Snowflake view behind the Power BI LSI semantic model. Use the LSI month controls and department buttons to review previous months, years and department combinations.</div></div>
+      const months = [...byMonthRaw.keys()].sort();
+      if (!months.length) return "";
+      const byMonthCategory = new Map(months.map(month => [month, lsiSummaryByCategory(byMonthRaw.get(month), "Rolling365")]));
+      const trendPoints = months.map(month => {
+        const categories = byMonthCategory.get(month) || [];
+        const promoters = categories.filter(item => item.contribution > 0).reduce((sum,item) => sum + item.contribution, 0);
+        const detractors = Math.abs(categories.filter(item => item.contribution < 0).reduce((sum,item) => sum + item.contribution, 0));
+        return { month, promoters, detractors, lsi: 100 + promoters - detractors };
+      });
+      const latestMonth = months[months.length - 1];
+      const latestDate = byMonthRaw.get(latestMonth).map(row => simpleDate(row.Date)).filter(Boolean).sort().pop();
+      const latestPoint = trendPoints[trendPoints.length - 1];
+      const latestCategories = (byMonthCategory.get(latestMonth) || []).sort((a,b) => b.contribution - a.contribution);
+      const maxAbs = Math.max(...latestCategories.map(item => Math.abs(item.contribution)), 1);
+      const rows = latestCategories.map(item => {
+        const trend = lsiCategoryTrend(item.category, byMonthCategory);
+        const arrow = trend === "up" ? "?" : trend === "down" ? "?" : "?";
+        const arrowClass = trend === "up" ? "up" : trend === "down" ? "down" : "";
+        const width = Math.max(2, Math.abs(item.contribution) / maxAbs * 50);
+        const style = item.contribution >= 0
+          ? `left:50%; width:${width}%;`
+          : `right:50%; width:${width}%;`;
+        const insight = item.insight || defaultLsiInsight(item.category, item.contribution);
+        return `<div class="lsi-cat-row">
+          <div class="lsi-cat-cell measure">${escapeHtml(item.category)}</div>
+          <div class="lsi-cat-cell"><div class="lsi-arrow ${arrowClass}">${escapeHtml(arrow)}</div></div>
+          <div class="lsi-cat-cell"><div class="lsi-variance"><div class="lsi-zero"></div><div class="lsi-var-bar ${item.contribution < 0 ? "neg" : ""}" style="${style}" title="${escapeHtml(formatRate(item.contribution,1))}"></div></div></div>
+          <div class="lsi-cat-cell lsi-insight">${escapeHtml(insight)}</div>
+        </div>`;
+      }).join("");
+      const latestDateLabel = latestDate ? toDate(latestDate).toLocaleDateString("en-AU", { day:"2-digit", month:"short", year:"2-digit" }) : shortMonthLabel(latestMonth);
+      return `<section class="lsi-card"><div class="lsi-panel">
+        <div class="lsi-powerbi-head"><div class="lsi-powerbi-title">Health &amp; Safety &nbsp; | &nbsp; Leading Safety Index Summary</div><div class="lsi-powerbi-logo" aria-label="Fortescue logo mark"></div></div>
+        ${lsiPeriodControlHtml(range)}
+        <div class="lsi-summary-main">
+          <div class="lsi-gauge-card"><div class="lsi-gauge-title"><strong>Leading Safety Index</strong><span>${escapeHtml(latestDateLabel)}</span></div>${lsiGaugeSvg(latestPoint.lsi)}</div>
+          <div class="lsi-trend-card">${lsiLineChartSvg(trendPoints)}</div>
         </div>
-        <div class="lsi-breakdown">
-          <div class="lsi-stack promoter"><h3>Leading Promoters</h3>${factorRows(promoters, "promoter")}</div>
-          <div class="lsi-stack detractor"><h3>Leading Detractors</h3>${factorRows(detractors, "detractor")}</div>
+        <div class="lsi-category-card">
+          <h3 class="lsi-category-title">Performance By Category</h3>
+          <div class="lsi-category-table">
+            <div class="lsi-cat-head">Measure Category</div>
+            <div class="lsi-cat-head">3 Month Comparison</div>
+            <div class="lsi-cat-head">Variance to Target</div>
+            <div class="lsi-cat-head">Insights</div>
+            ${rows}
+          </div>
         </div>
-        ${lsiFy27ChangePanelHtml(latestDate)}
       </div></section>`;
+    }
+    function defaultLsiInsight(category, contribution) {
+      const cat = cleanText(category).toLowerCase();
+      if (cat.includes("injur")) return "High incidence of injuries and days lost";
+      if (cat.includes("hazard")) return "Identify and close hazards before they become incidents";
+      if (cat.includes("identify")) return "Focus on improvements using Identify then Rectify";
+      if (cat.includes("critical control")) return "Focus on critical control monitoring";
+      if (cat.includes("incident")) return "High incidence of SIs and CIs";
+      if (cat.includes("action")) return contribution >= 0 ? "Actions are supporting LSI performance" : "Overdue actions are reducing LSI performance";
+      return "";
     }
     function safetyPerformanceHtml() {
       const kpiRows = latestKpiMonthlyRows();
