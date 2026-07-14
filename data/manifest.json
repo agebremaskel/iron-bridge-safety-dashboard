@@ -1,9 +1,10 @@
 {
   "snapshot": {
-    "generatedAt": "2026-07-10T16:11:43",
+    "generatedAt": "2026-07-14T12:01:23",
     "scope": "Iron Bridge OPF Operations",
     "scopeOptions": [
       "Iron Bridge CHF & West Canning Basin",
+      "Iron Bridge Maintenance Services",
       "Iron Bridge OPF Maintenance",
       "Iron Bridge OPF Operations",
       "Iron Bridge OPF Shutdowns"
@@ -79,6 +80,15 @@
         "Columns": 29,
         "HierarchyFields": "REPORTINGDEPARTMENT",
         "DateFields": "FIRSTDAYOFCALENDARMONTH, LASTDAYOFCALENDARMONTH, FISCALMONTHNO, MEASURE_VALUE_ROLLING_12_MONTHS, HOURS_ROLLING_12_MONTHS, PREVIOUS_MONTH_MEASURE_VALUE_ROLLING_12_MONTHS",
+        "KeyFields": "None identified"
+      },
+      {
+        "Domain": "Summary",
+        "Table": "DA_HEALTHANDSAFETY.SELFSERVICE.LeadingSafetyIndexSummary",
+        "Found": "Yes",
+        "Columns": 25,
+        "HierarchyFields": "ReportingDepartment, ReportingTeam",
+        "DateFields": "Date",
         "KeyFields": "None identified"
       },
       {
@@ -606,7 +616,8 @@
     "fieldLeadership": [
       "data/datasets/fieldLeadership.001.txt",
       "data/datasets/fieldLeadership.002.txt",
-      "data/datasets/fieldLeadership.003.txt"
+      "data/datasets/fieldLeadership.003.txt",
+      "data/datasets/fieldLeadership.004.txt"
     ],
     "behaviours": [
       "data/datasets/behaviours.001.txt",
@@ -620,8 +631,12 @@
     "itrActions": [
       "data/datasets/itrActions.001.txt"
     ],
+    "itrUpdates": [
+      "data/datasets/itrUpdates.001.txt"
+    ],
     "hazards": [
-      "data/datasets/hazards.001.txt"
+      "data/datasets/hazards.001.txt",
+      "data/datasets/hazards.002.txt"
     ],
     "inspections": [
       "data/datasets/inspections.001.txt"
@@ -629,13 +644,26 @@
     "kpiDaily": [
       "data/datasets/kpiDaily.001.txt",
       "data/datasets/kpiDaily.002.txt",
-      "data/datasets/kpiDaily.003.txt"
+      "data/datasets/kpiDaily.003.txt",
+      "data/datasets/kpiDaily.004.txt"
     ],
     "latestKpis": [
       "data/datasets/latestKpis.001.txt"
     ],
+    "kpiMonthly": [
+      "data/datasets/kpiMonthly.001.txt"
+    ],
+    "leadingSafetyIndex": [
+      "data/datasets/leadingSafetyIndex.001.txt"
+    ],
+    "leadingSafetyIndexSummary": [
+      "data/datasets/leadingSafetyIndexSummary.001.txt"
+    ],
     "targets": [
       "data/datasets/targets.001.txt"
+    ],
+    "leadershipRoles": [
+      "data/datasets/leadershipRoles.001.txt"
     ]
   }
 }

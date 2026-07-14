@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Iron Bridge | OPF Operations Safety Dashboard</title>
+  <title>Iron Bridge Operational Safety Intelligence</title>
   <style>
     :root {
       --ink:#001D44; --ink-2:#052b63; --text:#15171a; --muted:#5f6b77; --line:#d8e1ea; --green:#00FF00;
@@ -44,15 +44,15 @@
     .preset { min-height:34px; padding:5px 6px; background:white; color:var(--text); border:2px solid #222; box-shadow:none; font-weight:400; }
     .preset.active { background:var(--ink); color:white; border-color:var(--ink); }
     .refresh { margin-top:12px; }
-    .metrics { display:grid; grid-template-columns:repeat(6,minmax(145px,1fr)); gap:12px; }
-    .metric { padding:0 16px 15px; min-height:132px; text-align:center; transition:transform .12s ease, box-shadow .12s ease; }
+    .metrics { display:grid; grid-template-columns:repeat(6,minmax(145px,1fr)); gap:10px; align-items:start; }
+    .metric { padding:0 12px 10px; min-height:92px; text-align:center; transition:transform .12s ease, box-shadow .12s ease; }
     .metric:hover { transform:translateY(-2px); box-shadow:0 14px 28px rgba(0,29,68,.16); }
-    .metric .name { display:block; margin:0 -16px 14px; padding:9px 8px; color:white; background:var(--ink); font-size:13px; font-weight:800; }
+    .metric .name { display:block; margin:0 -12px 9px; padding:7px 6px; color:white; background:var(--ink); font-size:12px; line-height:1.1; font-weight:800; }
     .metric.primary .name { background:var(--mid-green); }
     .metric.warn .name { background:var(--red); }
-    .metric .value { margin-top:8px; font-size:44px; line-height:1; font-weight:800; color:var(--ink); }
+    .metric .value { margin-top:5px; font-size:36px; line-height:1; font-weight:800; color:var(--ink); }
     .metric.warn .value { color:var(--red); }
-    .metric .note { margin-top:10px; color:var(--muted); font-size:13px; }
+    .metric .note { margin-top:6px; color:var(--muted); font-size:11px; line-height:1.25; }
     .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
     .grid-3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
     section { padding:0 16px 16px; }
@@ -60,11 +60,38 @@
     .panel { border:1px solid var(--line); background:linear-gradient(180deg,#fff,#f9fbfd); padding:14px; border-radius:6px; }
     .chart-title { color:var(--ink); font-weight:800; font-size:15px; margin:0 0 12px; }
     .bar-row { display:grid; grid-template-columns:170px 1fr 42px; gap:10px; align-items:center; margin:9px 0; min-height:22px; }
-    .bar-label { font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .bar-label { font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; cursor:help; }
     .bar-track { height:13px; background:#eef1f3; border:1px solid #e1e5e8; }
     .bar-fill { height:100%; background:var(--green); }
     .bar-fill.orange { background:var(--orange); }
     .bar-value { font-size:12px; color:var(--muted); text-align:right; font-weight:800; }
+    .kpi-tracker { display:grid; gap:12px; }
+    .kpi-dept { border:1px solid var(--line); border-radius:6px; background:white; padding:12px; }
+    .kpi-dept h3 { margin:0 0 10px; color:var(--ink); font-size:15px; }
+    .kpi-list { display:grid; gap:8px; max-height:760px; overflow:auto; padding-right:4px; }
+    .kpi-person-row { display:grid; grid-template-columns:minmax(260px,330px) 1fr; gap:14px; align-items:center; padding:10px; border:1px solid #e3ebf3; background:#fbfdff; border-radius:6px; }
+    .kpi-person-name { color:var(--ink); font-size:14px; font-weight:900; line-height:1.2; }
+    .kpi-person-role { margin-top:3px; color:var(--muted); font-size:11px; line-height:1.25; }
+    .kpi-person-bars { display:grid; gap:7px; }
+    .kpi-progress { display:grid; grid-template-columns:88px 1fr 54px; gap:8px; align-items:center; }
+    .kpi-progress-label { color:var(--ink); font-size:11px; font-weight:900; text-transform:uppercase; }
+    .kpi-progress-track { position:relative; height:18px; background:#eef1f3; border:1px solid #dbe4ec; border-radius:999px; overflow:hidden; }
+    .kpi-progress-fill { height:100%; background:var(--green); border-radius:999px; }
+    .kpi-progress-fill.coached { background:#1f74d8; }
+    .kpi-progress-fill.short { background:var(--orange); }
+    .kpi-progress-fill.low { background:var(--red); }
+    .kpi-progress-value { color:var(--ink); font-size:12px; font-weight:900; text-align:right; }
+    .kpi-month-breakdown { grid-column:1 / -1; display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+    .kpi-month-chip { border:1px solid var(--line); background:#f8fbff; padding:4px 6px; font-size:10px; line-height:1.2; color:var(--ink); }
+    .kpi-month-chip.good { border-color:#bdeebf; background:var(--green-soft); }
+    .kpi-month-chip.partial { border-color:#ffd0bf; background:#fff0ea; }
+    .kpi-legend { display:flex; flex-wrap:wrap; gap:10px; align-items:center; color:var(--muted); font-size:12px; margin:6px 0 0; }
+    .kpi-key { width:11px; height:11px; display:inline-block; margin-right:4px; border-radius:2px; background:var(--green); }
+    .kpi-key.coached { background:#1f74d8; }
+    .kpi-month-controls { display:grid; grid-template-columns:minmax(160px,220px) minmax(160px,220px) 1fr; gap:12px; align-items:end; margin:0 0 10px; }
+    .kpi-month-note { color:var(--muted); font-size:12px; line-height:1.35; }
+    .kpi-summary { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-bottom:10px; }
+    .kpi-summary .mini { border:1px solid var(--line); padding:8px; background:#f8fbff; }
     .table-controls { display:grid; grid-template-columns:1fr 190px; gap:10px; margin-bottom:10px; }
     .table-wrap { width:100%; overflow:auto; border:1px solid var(--line); max-height:720px; }
     table { width:100%; min-width:1320px; border-collapse:collapse; table-layout:fixed; font-size:12px; background:white; }
@@ -93,11 +120,85 @@
     .donut-wrap { position:relative; display:grid; place-items:center; min-height:220px; }
     .legend-row { display:grid; grid-template-columns:14px 1fr auto; gap:8px; align-items:center; margin:7px 0; font-size:12px; }
     .swatch { width:14px; height:14px; border-radius:2px; background:var(--green); }
+    .body-focus { display:grid; grid-template-columns:190px minmax(0,1fr); gap:16px; align-items:center; margin-top:12px; padding:12px; border:1px solid var(--line); background:linear-gradient(180deg,#fbfdff,#eef7ff); border-radius:6px; }
+    .body-map { width:176px; height:250px; margin:auto; filter:drop-shadow(0 8px 12px rgba(0,29,68,.15)); }
+    .body-part { fill:#e8eef4; stroke:#cbd7e2; stroke-width:2; transition:opacity .12s ease; }
+    .body-part.hot-low { fill:#ffd84d; }
+    .body-part.hot-med { fill:#ff9f1c; }
+    .body-part.hot-high { fill:#ff6b35; }
+    .body-part.hot-alert { fill:#c6282f; }
+    .body-uniform { fill:var(--ink); stroke:#001b40; stroke-width:2; }
+    .body-ppe { fill:var(--green); stroke:#00b833; stroke-width:1.5; }
+    .body-skin { fill:#d8a16b; stroke:#a56f40; stroke-width:1.5; }
+    .body-boot { fill:#203247; stroke:#152131; stroke-width:1.5; }
+    .body-list { display:grid; gap:8px; }
+    .body-row { display:grid; grid-template-columns:112px 1fr 76px; gap:8px; align-items:center; font-size:12px; }
+    .body-row .bar-track { height:10px; }
     .panel-controls { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:0 0 12px; align-items:end; }
     .mini-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin:10px 0; }
     .mini { border:1px solid var(--line); padding:8px; min-height:64px; background:#f8f9fa; }
     .mini strong { display:block; color:var(--ink); font-size:22px; }
     .mini span { color:var(--muted); font-size:12px; }
+    .performance-card { padding-bottom:18px; }
+    .performance-panel { padding:16px; background:linear-gradient(180deg,#ffffff,#f7fbff); }
+    .performance-hero { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; margin-bottom:14px; }
+    .perf-metric { position:relative; min-height:132px; padding:16px; border:1px solid #d8e5f2; border-top:8px solid var(--green); background:linear-gradient(135deg,#ffffff 0%,#f7fbff 64%,#eaf4ff 100%); border-radius:6px; box-shadow:0 5px 14px rgba(0,29,68,.08); overflow:hidden; }
+    .perf-metric::before { content:""; position:absolute; right:16px; top:18px; width:42px; height:42px; border:10px solid var(--green); border-radius:999px; opacity:.18; }
+    .perf-metric::after { content:""; position:absolute; right:-34px; bottom:-44px; width:128px; height:128px; border-radius:999px; background:rgba(0,255,0,.08); }
+    .perf-metric.rate { border-top-color:var(--ink); }
+    .perf-metric.rate::before { border-color:var(--ink); }
+    .perf-metric.rate::after { background:rgba(0,29,68,.08); }
+    .perf-metric.lsi { border-top-color:var(--green); }
+    .perf-metric.lsi::before { border-color:var(--green); }
+    .perf-metric.lsi::after { background:rgba(0,255,0,.10); }
+    .perf-kicker { color:var(--muted); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.05em; }
+    .perf-value { margin-top:8px; color:var(--ink); font-size:48px; line-height:1; font-weight:900; }
+    .perf-label { margin-top:8px; color:var(--ink); font-size:16px; font-weight:900; }
+    .perf-sub { margin-top:5px; color:var(--muted); font-size:12px; line-height:1.35; max-width:260px; }
+    .performance-context { display:grid; grid-template-columns:1fr; gap:12px; }
+    .perf-context-card { border:1px solid #d8e5f2; background:white; border-radius:6px; padding:12px; min-height:auto; }
+    .perf-context-card h3 { margin:0 0 10px; color:var(--ink); font-size:14px; }
+    .perf-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+    .perf-row { display:block; border-left:4px solid var(--green); background:#f8fbff; padding:8px 10px; color:var(--text); font-size:12px; min-height:52px; }
+    .perf-row span { display:block; line-height:1.25; }
+    .perf-row strong { display:block; margin-top:4px; color:var(--ink); font-size:18px; line-height:1; }
+    .perf-chip-row { display:flex; flex-wrap:wrap; gap:6px; }
+    .perf-chip { display:inline-flex; align-items:center; min-height:26px; padding:4px 8px; border:1px solid #cfe1f4; background:white; color:var(--ink); border-radius:999px; font-size:11px; font-weight:800; }
+    .lsi-card { padding-bottom:18px; }
+    .lsi-panel { border:1px solid var(--line); background:linear-gradient(180deg,#fff,#f8fbff); border-radius:6px; padding:14px; }
+    .lsi-top { display:grid; grid-template-columns:220px 1fr; gap:14px; align-items:stretch; margin-bottom:12px; }
+    .lsi-gauge { display:grid; place-items:center; min-height:170px; border:1px solid #d8e5f2; background:white; border-radius:6px; position:relative; overflow:hidden; }
+    .lsi-gauge::after { content:""; position:absolute; right:-44px; bottom:-44px; width:130px; height:130px; border-radius:999px; background:rgba(0,255,0,.10); }
+    .lsi-score { position:relative; z-index:1; color:var(--ink); font-size:54px; font-weight:900; line-height:1; }
+    .lsi-score span { display:block; margin-top:8px; color:var(--muted); font-size:12px; font-weight:800; text-transform:uppercase; }
+    .lsi-trend { border:1px solid #d8e5f2; background:white; border-radius:6px; padding:12px; }
+    .lsi-months { display:flex; gap:7px; align-items:end; height:116px; margin-top:8px; border-bottom:1px solid var(--line); padding:0 4px 4px; }
+    .lsi-month { flex:1; min-width:28px; display:grid; align-items:end; gap:4px; text-align:center; color:var(--muted); font-size:10px; }
+    .lsi-month-bar { width:100%; min-height:5px; background:linear-gradient(180deg,var(--green),#0cb94a); border-radius:4px 4px 0 0; }
+    .lsi-month.detractor .lsi-month-bar { background:linear-gradient(180deg,#ff6b35,#b4252d); }
+    .lsi-breakdown { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px; }
+    .lsi-stack { border:1px solid #d8e5f2; border-radius:6px; background:white; padding:12px; }
+    .lsi-stack h3 { margin:0 0 10px; color:var(--ink); font-size:15px; }
+    .lsi-stack.promoter h3 { color:#008a18; }
+    .lsi-stack.detractor h3 { color:var(--red); }
+    .lsi-factor { display:grid; grid-template-columns:120px 1fr 52px; gap:8px; align-items:center; margin:8px 0; font-size:12px; }
+    .lsi-factor label { color:var(--ink); font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .lsi-factor .bar-track { height:12px; }
+    .lsi-factor.detractor .bar-fill { background:var(--red); }
+    .lsi-factor small { color:var(--muted); font-weight:800; text-align:right; }
+    .lsi-note { margin-top:10px; padding-left:10px; border-left:4px solid var(--green); color:var(--muted); font-size:12px; line-height:1.35; }
+    .lsi-fy27 { margin-top:12px; border:1px solid #d8e5f2; background:#fbfdff; border-radius:6px; padding:12px; }
+    .lsi-fy27 h3 { margin:0 0 10px; color:var(--ink); font-size:15px; }
+    .lsi-fy27-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; }
+    .lsi-change { border-left:4px solid var(--green); background:white; padding:9px 10px; min-height:98px; }
+    .lsi-change.detractor { border-left-color:var(--red); }
+    .lsi-change strong { display:block; color:var(--ink); font-size:12px; line-height:1.25; }
+    .lsi-change span { display:inline-block; margin:5px 0 6px; padding:3px 6px; border-radius:999px; background:var(--green-soft); color:#087318; font-size:10px; font-weight:900; text-transform:uppercase; }
+    .lsi-change.detractor span { background:#fff0ea; color:var(--red); }
+    .lsi-change p { margin:0; color:var(--muted); font-size:11px; line-height:1.35; }
+    .mini-select { display:flex; justify-content:space-between; align-items:center; gap:10px; margin:0 0 12px; }
+    .mini-select label { font-size:11px; color:var(--muted); font-weight:800; text-transform:uppercase; }
+    .mini-select select { min-width:155px; border:1px solid var(--line); padding:7px 9px; font-weight:800; color:var(--ink); background:white; }
     .inline-table { max-height:260px; overflow:auto; border:1px solid var(--line); margin-top:10px; border-radius:6px; }
     .inline-table.tall { max-height:520px; }
     .inline-table table { min-width:760px; }
@@ -106,6 +207,11 @@
     .itr-summary { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-bottom:14px; }
     .itr-summary section { box-shadow:none; padding:0 12px 12px; }
     .itr-summary h2 { font-size:15px; margin:0 -12px 10px; }
+    .itr-summary .wide-card { grid-column:1 / -1; }
+    .field-leadership-summary { grid-template-columns:repeat(3,minmax(0,1fr)); align-items:stretch; }
+    .field-leadership-summary > section { min-width:0; }
+    .actions-summary { grid-template-columns:repeat(4,minmax(0,1fr)); align-items:stretch; }
+    .actions-summary > section { min-width:0; }
     .itr-subsection { margin-top:18px; }
     .itr-subsection-title { margin:0 0 10px; padding:10px 12px; color:white; background:var(--ink); font-weight:900; text-align:center; }
     .closed-controls { display:grid; grid-template-columns:1fr 1fr 180px; gap:10px; align-items:end; margin-bottom:12px; }
@@ -120,6 +226,8 @@
     .itr-list-head button { min-height:0; padding:0; background:transparent; color:var(--ink); box-shadow:none; border:0; font:inherit; text-align:left; }
     .itr-list-head button:hover { text-decoration:underline; }
     .itr-summary-item label { display:block; color:var(--muted); font-size:10px; text-transform:uppercase; font-weight:900; margin-bottom:2px; }
+    .record-link { display:inline-block; margin-top:4px; color:var(--ink); font-size:11px; font-weight:900; text-decoration:underline; text-underline-offset:2px; }
+    .record-link:hover { color:#006bff; }
     .itr-description-preview { margin-top:8px; color:#253548; font-size:12px; line-height:1.35; max-width:1250px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .itr-toggle-hint { color:var(--muted); font-size:11px; margin-top:6px; }
     .itr-id { color:var(--ink); font-size:16px; font-weight:900; }
@@ -131,6 +239,18 @@
     .itr-field label { display:block; color:var(--muted); font-size:10px; text-transform:uppercase; font-weight:900; margin-bottom:4px; }
     .itr-text { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .itr-text-box { border:1px solid var(--line); padding:10px; background:#fff; white-space:pre-wrap; line-height:1.4; }
+    .record-explorer { border:1px solid var(--line); background:#fbfdff; border-radius:6px; padding:10px; }
+    .record-explorer > summary { cursor:pointer; color:var(--ink); font-weight:900; }
+    .record-section-title { margin:12px 0 8px; color:var(--ink); font-size:13px; font-weight:900; }
+    .record-field-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px; margin-top:10px; }
+    .record-field { border:1px solid #e3ebf3; background:white; padding:8px; min-height:54px; }
+    .record-field label { display:block; color:var(--muted); font-size:9px; text-transform:uppercase; font-weight:900; margin-bottom:4px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .record-field div { font-size:12px; line-height:1.35; overflow-wrap:anywhere; white-space:pre-wrap; }
+    .related-list { display:grid; gap:8px; }
+    .related-card { border:1px solid #e3ebf3; background:white; border-radius:6px; padding:9px; }
+    .related-head { display:flex; justify-content:space-between; gap:10px; color:var(--ink); font-weight:900; font-size:12px; }
+    .related-meta { margin-top:5px; color:var(--muted); font-size:11px; line-height:1.35; }
+    .related-desc { margin-top:6px; font-size:12px; line-height:1.35; white-space:pre-wrap; }
     .itr-actions { border:1px solid var(--line); background:#fff; overflow:auto; }
     .itr-actions table { min-width:860px; }
     .itr-actions th { position:sticky; top:0; }
@@ -143,18 +263,27 @@
     .date-sort-button { width:100%; min-height:38px; padding:8px 10px; text-align:left; line-height:1.2; border:2px solid var(--ink); background:white; color:var(--ink); box-shadow:none; }
     .date-sort-button:hover { background:#f3fff3; }
     .department-hint { margin-top:8px; color:var(--muted); font-size:11px; line-height:1.35; }
+    .data-refresh { border-left:5px solid var(--green); background:white; box-shadow:var(--shadow); padding:10px 12px; }
+    .data-refresh label { display:block; color:var(--muted); font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:3px; }
+    .data-refresh div { color:var(--ink); font-size:13px; font-weight:900; line-height:1.25; }
+    .data-refresh span { display:block; color:var(--muted); font-size:10px; font-weight:800; margin-top:3px; }
     .source-note { margin-top:10px; padding:10px; border-left:4px solid var(--green); background:#f8fff8; color:var(--muted); font-size:12px; line-height:1.45; }
-    @media (max-width:1100px) { .app-frame { grid-template-columns:1fr; padding:14px; } .side-nav { position:static; } .tabs { display:grid; grid-template-columns:repeat(3,1fr); } .metrics,.grid-2,.grid-3,.insight-grid { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } }
-    @media (max-width:700px) { .app-frame { padding:12px; } h1 { font-size:34px; } .metrics,.grid-2,.grid-3,.insight-grid,.table-controls,.panel-controls,.mini-metrics,.itr-toolbar,.itr-register-tools,.itr-summary,.closed-controls,.itr-grid,.itr-text,.itr-summary-line,.itr-list-head { grid-template-columns:1fr; } .tabs,.preset-row { grid-template-columns:1fr 1fr; } }
+    @media (max-width:1100px) { .app-frame { grid-template-columns:1fr; padding:14px; } .side-nav { position:static; } .tabs { display:grid; grid-template-columns:repeat(3,1fr); } .metrics,.grid-2,.grid-3,.insight-grid,.performance-hero,.performance-context { grid-template-columns:1fr 1fr; } .insight { grid-template-columns:1fr; } }
+    @media (max-width:700px) { .app-frame { padding:12px; } h1 { font-size:34px; } .metrics,.grid-2,.grid-3,.insight-grid,.table-controls,.panel-controls,.mini-metrics,.itr-toolbar,.itr-register-tools,.itr-summary,.closed-controls,.itr-grid,.itr-text,.itr-summary-line,.itr-list-head,.performance-hero,.performance-context { grid-template-columns:1fr; } .tabs,.preset-row { grid-template-columns:1fr 1fr; } }
   </style>
 </head>
 <body>
   <div class="topbar">
     <div class="brand"><span class="beacon" aria-hidden="true"></span><span>Fortescue</span></div>
-    <div class="topbar-meta" id="topbarTitle">OPF Operations Safety Dashboard</div>
+    <div class="topbar-meta" id="topbarTitle">Iron Bridge Operational Safety Intelligence</div>
   </div>
   <div class="app-frame">
     <aside class="side-nav">
+      <div class="data-refresh">
+        <label>Data current as of</label>
+        <div id="dataRefreshedAt">Loading</div>
+        <span>Snowflake refresh</span>
+      </div>
       <div class="side-panel">
         <div class="side-title">Dashboard sections</div>
         <nav class="tabs" id="tabs"></nav>
@@ -162,7 +291,7 @@
       <div class="side-panel">
         <div class="side-title">Department</div>
         <div class="department-list" id="departmentList"></div>
-        <div class="department-hint">Filters the whole dashboard to the selected L5 department.</div>
+        <div class="department-hint">Click one department, or Ctrl+click to combine multiple departments.</div>
       </div>
       <div class="side-panel">
         <div class="side-title">Date range</div>
@@ -189,7 +318,7 @@
     <main class="main">
       <header>
         <div class="label">Safety Performance</div>
-        <h1 id="dashboardTitle">Iron Bridge | OPF Operations Safety Dashboard</h1>
+        <h1 id="dashboardTitle">Iron Bridge Operational Safety Intelligence</h1>
       </header>
       <div class="metrics" id="metrics"></div>
       <div id="sections"></div>
@@ -227,12 +356,12 @@
       ["inspections", "Workplace Inspections"],
       ["sources", "Source Coverage"]
     ];
-    const DEPARTMENTS = SNAPSHOT.scopeOptions || [
+    const DEPARTMENTS = ["All departments", ...(SNAPSHOT.scopeOptions || [
       "Iron Bridge CHF & West Canning Basin",
       "Iron Bridge OPF Maintenance",
       "Iron Bridge OPF Operations",
       "Iron Bridge OPF Shutdowns"
-    ];
+    ])];
     const DATE_FIELDS = {
       itrs: ["IdentifyRectify_DateIdentified", "IdentifyRectify_CompletionDate"],
       incidents: ["IncidentDate"],
@@ -246,8 +375,11 @@
     const state = {
       section:"summary",
       department: SNAPSHOT.scope || "Iron Bridge OPF Operations",
+      departments:[SNAPSHOT.scope || "Iron Bridge OPF Operations"],
       startDate:null,
       endDate:null,
+      startDateTime:null,
+      endDateTime:null,
       preset:"last7",
       tableSearch:"",
       itrSearch:"",
@@ -255,6 +387,12 @@
       sectionDateSort:{ incidents:"desc", fieldLeadership:"desc", actions:"asc", hazards:"desc", inspections:"desc" },
       itrClosedStartDate:null,
       itrClosedEndDate:null,
+      leadershipCompletionSplit:"department",
+      leadershipKpiMonth:null,
+      leadershipKpiStartMonth:null,
+      leadershipKpiEndMonth:null,
+      lsiStartMonth:null,
+      lsiEndMonth:null,
       actionFilters:{ Action_BK:"", DueDate:"", DaysUntilDue:"", ResponsibleName:"", Title:"", Criticality:"" },
       activeActionFilter:null,
       actionSort:{ field:null, dir:"asc" },
@@ -263,10 +401,10 @@
       quickColumnWidths:{ actions: {}, incidents: { BriefDescription:280 } },
       panels:{
         itrs: { startDate:null, endDate:null, split:"Assessment_Priority", chart:"donut" },
-        incidents: { startDate:null, endDate:null, split:"IncidentClassification", chart:"bar" },
+        incidents: { startDate:null, endDate:null, split:"IncidentClassification", chart:"donut" },
         leadership: { startDate:null, endDate:null, split:"Category", chart:"donut" },
-        actions: { startDate:null, endDate:null, split:"DueBucket", chart:"bar" },
-        hazards: { startDate:null, endDate:null, split:"RiskRating", chart:"bar" },
+        actions: { startDate:null, endDate:null, split:"DueBucket", chart:"donut" },
+        hazards: { startDate:null, endDate:null, split:"RiskRating", chart:"donut" },
         inspections: { startDate:null, endDate:null, split:"QuestionnaireResult", chart:"donut" }
       }
     };
@@ -274,10 +412,65 @@
     function isSapId(value) { return /^0\d{5,9}$/.test(String(value ?? "").trim()); }
     function displayValue(value) { return isSapId(value) ? "Not recorded" : (value ?? ""); }
     function escapeHtml(value) { return String(displayValue(value)).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+    function safeUrl(value) {
+      const text = String(value ?? "").trim();
+      if (!text || /^blank$/i.test(text)) return "";
+      try {
+        const url = new URL(text);
+        return /^https?:$/i.test(url.protocol) ? url.href : "";
+      } catch (_) {
+        return "";
+      }
+    }
+    function recordLinkHtml(row, config) {
+      const getter = config.linkUrl || (r => r.LinkToNewITR || r.LinkToLegacy);
+      const url = safeUrl(typeof getter === "function" ? getter(row) : row[getter]);
+      if (!url) return "";
+      return `<a class="record-link" href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer">Open in BMS</a>`;
+    }
     function toDate(value) { return new Date(`${value}T00:00:00`); }
     function isoDate(date) { const y=date.getFullYear(); const m=String(date.getMonth()+1).padStart(2,"0"); const d=String(date.getDate()).padStart(2,"0"); return `${y}-${m}-${d}`; }
     function addDays(value, days) { const d=toDate(value); d.setDate(d.getDate()+days); return isoDate(d); }
+    function formatDataRefreshedAt(value) {
+      if (!value) return "Not recorded";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString("en-AU", {
+        day:"2-digit", month:"short", year:"numeric",
+        hour:"numeric", minute:"2-digit", hour12:true
+      });
+    }
+    function parseDateTime(value) {
+      if (!value) return null;
+      const text = String(value).trim();
+      const normalised = text.includes("T") ? text : text.replace(" ", "T");
+      const date = new Date(normalised.length <= 10 ? `${normalised}T00:00:00` : normalised);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+    function timeBucketHour(value) {
+      const match = String(value || "").match(/^(\d{2})\d{2}/);
+      return match ? Number(match[1]) : null;
+    }
     function rowDate(row, fields) { for (const f of fields) { const v = row[f]; if (v) return String(v).slice(0,10); } return ""; }
+    function rowDateTime(row, key) {
+      const fields = DATE_FIELDS[key] || [];
+      for (const f of fields) {
+        const v = row[f];
+        if (!v) continue;
+        const text = String(v);
+        const hasExplicitTime = /[T ]\d{2}:\d{2}/.test(text);
+        const base = parseDateTime(v);
+        if (!base) continue;
+        if (hasExplicitTime) return base;
+        const bucket = key === "fieldLeadership" || key === "behaviours" ? row.TimeOfDayConducted
+          : key === "incidents" ? row.IncidentTimeofDay
+          : null;
+        const hour = timeBucketHour(bucket);
+        if (hour !== null) base.setHours(hour, 0, 0, 0);
+        return base;
+      }
+      return null;
+    }
     function allDates() {
       const dates = [];
       Object.entries(DATE_FIELDS).forEach(([key, fields]) => (DATA[key] || []).forEach(row => { const d = rowDate(row, fields); if (d) dates.push(d); }));
@@ -291,11 +484,31 @@
     function dateOffset(value) { return Math.round((toDate(value) - toDate(MIN_DATE)) / 86400000); }
     const maxOffset = dateOffset(MAX_DATE);
     function rowDepartment(row) { return row.Tier05FullName || row.L5Name || row.ReportingDepartment || row.REPORTINGDEPARTMENT || ""; }
+    function selectedDepartments() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      return selected.includes("All departments") ? DEPARTMENTS.filter(name => name !== "All departments") : selected;
+    }
+    function selectedDepartmentLabel() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      if (selected.includes("All departments")) return "All departments";
+      if (selected.length === 1) return selected[0];
+      return `${selected.length} departments selected`;
+    }
     function departmentScoped(key, rows = DATA[key] || []) {
       if (key === "sources" || !state.department) return rows;
-      return rows.filter(row => rowDepartment(row) === state.department);
+      const selected = selectedDepartments();
+      if (!selected.length) return rows;
+      const selectedSet = new Set(selected);
+      return rows.filter(row => selectedSet.has(rowDepartment(row)));
     }
-    function inRange(row, key) { const d = rowDate(row, DATE_FIELDS[key] || []); return !d || (d >= state.startDate && d <= state.endDate); }
+    function inRange(row, key) {
+      if (state.preset === "last24" && state.startDateTime && state.endDateTime) {
+        const dt = rowDateTime(row, key);
+        return !dt || (dt >= state.startDateTime && dt <= state.endDateTime);
+      }
+      const d = rowDate(row, DATE_FIELDS[key] || []);
+      return !d || (d >= state.startDate && d <= state.endDate);
+    }
     function filtered(key, rows = DATA[key] || []) { return departmentScoped(key, rows).filter(row => inRange(row, key)); }
     function openItrs() { return filtered("itrs").filter(r => String(r.IdentifyRectify_CloseRecordFlag).toLowerCase() === "no"); }
     function closedItrs() { return filtered("itrs").filter(r => String(r.IdentifyRectify_CloseRecordFlag).toLowerCase() === "yes"); }
@@ -305,6 +518,7 @@
     function openActions(rows = filtered("actions")) { return rows.filter(r => r.Status === "Open"); }
     function openHazards(rows = filtered("hazards")) { return rows.filter(r => r.Status === "Open"); }
     function atRiskBehaviours(rows = filtered("behaviours")) { return rows.filter(r => r.BehaviourType === "At Risk"); }
+    function completedFieldLeadership(rows = filtered("fieldLeadership")) { return rows.filter(r => String(r.FieldLeadershipStatus || "").toLowerCase() === "closed"); }
     function isMediumHighHazard(row) {
       const rating = String(row.RiskRating || "").toUpperCase();
       return rating.includes("MEDIUM") || rating.includes("MODERATE") || rating.includes("HIGH");
@@ -316,15 +530,58 @@
         return (result.includes("not compliant") || result.includes("non compliant")) && !result.includes("partially");
       });
     }
+    function completedInspections(rows = filtered("inspections")) {
+      return rows.filter(r => {
+        const complete = String(r["InspectionComplete?"] || "").toLowerCase();
+        const closed = String(r.Closed || "").toLowerCase();
+        return complete === "yes" || closed === "yes";
+      });
+    }
     function behaviourIdentifier(row) {
       const fullName = [row.FieldLeadershipCoachFirstName, row.FieldLeadershipCoachLastName].filter(Boolean).join(" ");
       return fullName || row.FieldLeadershipCoachName || "Not recorded";
+    }
+    function fieldLeadershipIdentifier(row) { return row.FieldLeadershipCoachFullName || "Not recorded"; }
+    function fieldLeadershipLocation(row) {
+      return row.FieldLeadershipLocationVisited
+        || row.FieldLeadershipRefLocationVisited
+        || row.FieldLeadershipHierarchyLocation
+        || row.FieldLeadershipRefLocation
+        || row.FieldLeadershipTier7LocationName
+        || row.FieldLeadershipTier6LocationName
+        || row.FieldLeadershipTier5LocationName
+        || row.Tier07FullName
+        || row.Tier06FullName
+        || row.ReportingSite
+        || "Not recorded";
+    }
+    function leadershipCompletionLabel(row) {
+      if (state.leadershipCompletionSplit === "personnel") return fieldLeadershipIdentifier(row);
+      if (state.leadershipCompletionSplit === "location") return fieldLeadershipLocation(row);
+      return row.Tier05FullName || "Not recorded";
+    }
+    function leadershipCompletionControl() {
+      return `<div class="mini-select"><label>Show completed FLs by</label><select data-leadership-completion-split>
+        <option value="department" ${state.leadershipCompletionSplit === "department" ? "selected" : ""}>Department</option>
+        <option value="personnel" ${state.leadershipCompletionSplit === "personnel" ? "selected" : ""}>Personnel</option>
+        <option value="location" ${state.leadershipCompletionSplit === "location" ? "selected" : ""}>Location conducted</option>
+      </select></div>`;
     }
     function hazardIdentifier(row) { return row.HazardReportedByName || row.HazardEnteredByName || row.HazardOwnerName || "Not recorded"; }
     function inspectionIdentifier(row) { return row.InspectionInspectedByName || row.InspectionClosedByName || row.InspectionAreaSuperintendentName || "Not recorded"; }
     function panelDate(row, panel) {
       const keyMap = { itrs:"itrs", incidents:"incidents", leadership:"fieldLeadership", actions:"actions", hazards:"hazards", inspections:"inspections" };
       return rowDate(row, DATE_FIELDS[keyMap[panel]] || []);
+    }
+    function panelInRange(row, panel, cfg) {
+      const keyMap = { itrs:"itrs", incidents:"incidents", leadership:"behaviours", actions:"actions", hazards:"hazards", inspections:"inspections" };
+      const key = keyMap[panel];
+      if (state.preset === "last24" && state.startDateTime && state.endDateTime) {
+        const dt = rowDateTime(row, key);
+        return !dt || (dt >= state.startDateTime && dt <= state.endDateTime);
+      }
+      const d = panel === "leadership" ? rowDate(row, DATE_FIELDS.behaviours) : panelDate(row, panel);
+      return !d || (d >= cfg.startDate && d <= cfg.endDate);
     }
     function panelRows(panel) {
       const cfg = state.panels[panel];
@@ -333,12 +590,9 @@
         : panel === "leadership" ? atRiskBehaviours(departmentScoped("behaviours"))
         : panel === "actions" ? openActions(departmentScoped("actions"))
         : panel === "hazards" ? mediumHighHazards(departmentScoped("hazards"))
-        : panel === "inspections" ? nonCompliantInspections(departmentScoped("inspections"))
+        : panel === "inspections" ? completedInspections(departmentScoped("inspections"))
         : [];
-      return rows.filter(row => {
-        const d = panel === "leadership" ? rowDate(row, DATE_FIELDS.behaviours) : panelDate(row, panel);
-        return !d || (d >= cfg.startDate && d <= cfg.endDate);
-      });
+      return rows.filter(row => panelInRange(row, panel, cfg));
     }
     function countBy(rows, field) {
       const m = new Map(); rows.forEach(r => { const k = r[field] || "Blank"; m.set(k, (m.get(k)||0)+1); });
@@ -352,6 +606,225 @@
         m.set(key, (m.get(key) || 0) + 1);
       });
       return [...m.entries()].sort((a,b)=>b[1]-a[1] || String(a[0]).localeCompare(String(b[0])));
+    }
+    function normalisePersonName(value) {
+      return String(value || "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .toUpperCase();
+    }
+    function isoMonth(date) {
+      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,"0")}`;
+    }
+    function availableLeadershipMonths() {
+      const months = new Set();
+      (DATA.fieldLeadership || []).forEach(row => {
+        const d = rowDate(row, DATE_FIELDS.fieldLeadership);
+        if (d) months.add(d.slice(0,7));
+      });
+      return [...months].sort();
+    }
+    const LEADERSHIP_MONTHS = availableLeadershipMonths();
+    function availableLsiMonths() {
+      const months = new Set();
+      (DATA.leadingSafetyIndexSummary || []).forEach(row => {
+        const d = simpleDate(row.Date);
+        if (d) months.add(d.slice(0,7));
+      });
+      if (!months.size) {
+        (DATA.leadingSafetyIndex || []).forEach(row => {
+          const d = simpleDate(row.LASTDAYOFCALENDARMONTH);
+          if (d) months.add(d.slice(0,7));
+        });
+      }
+      return [...months].sort();
+    }
+    const LSI_MONTHS = availableLsiMonths();
+    function clampLeadershipMonth(value) {
+      if (!LEADERSHIP_MONTHS.length) return value || isoMonth(refreshedAtDate());
+      if (!value || value < LEADERSHIP_MONTHS[0]) return LEADERSHIP_MONTHS[0];
+      if (value > LEADERSHIP_MONTHS[LEADERSHIP_MONTHS.length - 1]) return LEADERSHIP_MONTHS[LEADERSHIP_MONTHS.length - 1];
+      return value;
+    }
+    function clampLsiMonth(value) {
+      if (!LSI_MONTHS.length) return value || isoMonth(refreshedAtDate());
+      if (!value || value < LSI_MONTHS[0]) return LSI_MONTHS[0];
+      if (value > LSI_MONTHS[LSI_MONTHS.length - 1]) return LSI_MONTHS[LSI_MONTHS.length - 1];
+      return value;
+    }
+    function currentLeadershipMonth() {
+      const fallback = isoMonth(refreshedAtDate());
+      if (!LEADERSHIP_MONTHS.length) return fallback;
+      const selected = state.leadershipKpiMonth || fallback;
+      if (LEADERSHIP_MONTHS.includes(selected)) return selected;
+      return LEADERSHIP_MONTHS[LEADERSHIP_MONTHS.length - 1];
+    }
+    function leadershipMonthRange() {
+      const fallback = currentLeadershipMonth();
+      let start = clampLeadershipMonth(state.leadershipKpiStartMonth || state.leadershipKpiMonth || fallback);
+      let end = clampLeadershipMonth(state.leadershipKpiEndMonth || state.leadershipKpiMonth || fallback);
+      if (start > end) [start, end] = [end, start];
+      const source = LEADERSHIP_MONTHS.length ? LEADERSHIP_MONTHS : [fallback];
+      const months = source.filter(month => month >= start && month <= end);
+      return { start, end, months: months.length ? months : [fallback] };
+    }
+    function lsiMonthRange() {
+      const fallback = LSI_MONTHS.length ? LSI_MONTHS[LSI_MONTHS.length - 1] : isoMonth(refreshedAtDate());
+      let start = clampLsiMonth(state.lsiStartMonth || fallback);
+      let end = clampLsiMonth(state.lsiEndMonth || fallback);
+      if (start > end) [start, end] = [end, start];
+      const source = LSI_MONTHS.length ? LSI_MONTHS : [fallback];
+      const months = source.filter(month => month >= start && month <= end);
+      return { start, end, months: months.length ? months : [fallback] };
+    }
+    function monthLabel(value) {
+      const [year, month] = String(value || "").split("-").map(Number);
+      if (!year || !month) return "Selected month";
+      return new Date(year, month - 1, 1).toLocaleString("en-AU", { month:"long", year:"numeric" });
+    }
+    function shortMonthLabel(value) {
+      const [year, month] = String(value || "").split("-").map(Number);
+      if (!year || !month) return value || "";
+      return new Date(year, month - 1, 1).toLocaleString("en-AU", { month:"short", year:"2-digit" });
+    }
+    function leadershipMonthControl() {
+      const range = leadershipMonthRange();
+      const min = LEADERSHIP_MONTHS[0] || range.start;
+      const max = LEADERSHIP_MONTHS[LEADERSHIP_MONTHS.length - 1] || range.end;
+      const label = range.start === range.end ? monthLabel(range.start) : `${monthLabel(range.start)} to ${monthLabel(range.end)}`;
+      return `<div class="kpi-month-controls">
+        <div class="control"><label>KPI start month</label><input type="month" data-leadership-kpi-start-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.start)}" /></div>
+        <div class="control"><label>KPI end month</label><input type="month" data-leadership-kpi-end-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.end)}" /></div>
+        <div class="kpi-month-note">Showing ${escapeHtml(label)}. Targets reset each month: 8 completed field leaderships and 4 coached field leaderships per person. Source months available: ${escapeHtml(monthLabel(min))} to ${escapeHtml(monthLabel(max))}.</div>
+      </div>`;
+    }
+    function lsiMonthControl() {
+      const range = lsiMonthRange();
+      const min = LSI_MONTHS[0] || range.start;
+      const max = LSI_MONTHS[LSI_MONTHS.length - 1] || range.end;
+      const label = range.start === range.end ? monthLabel(range.start) : `${monthLabel(range.start)} to ${monthLabel(range.end)}`;
+      return `<div class="kpi-month-controls lsi-month-controls">
+        <div class="control"><label>LSI start month</label><input type="month" data-lsi-start-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.start)}" /></div>
+        <div class="control"><label>LSI end month</label><input type="month" data-lsi-end-month min="${escapeHtml(min)}" max="${escapeHtml(max)}" value="${escapeHtml(range.end)}" /></div>
+        <div class="kpi-month-note">Showing ${escapeHtml(label)}. Source months available: ${escapeHtml(monthLabel(min))} to ${escapeHtml(monthLabel(max))}. Department buttons on the left filter this LSI view.</div>
+      </div>`;
+    }
+    function leadershipMonthlyRows() {
+      const range = leadershipMonthRange();
+      const monthSet = new Set(range.months);
+      const selectedSet = new Set(selectedDepartments());
+      const roles = (DATA.leadershipRoles || []).filter(row => selectedSet.has(rowDepartment(row)));
+      const roleMap = new Map();
+      roles.forEach(row => {
+        const name = row.FullName || row.FULL_NAME;
+        const key = String(row.EmployeeID || name || "").trim();
+        if (!key || roleMap.has(key)) return;
+        roleMap.set(key, {
+          employeeId: row.EmployeeID || "",
+          name,
+          position: row.PositionDescription || row.POSITION,
+          department: rowDepartment(row),
+          leader: row.LeaderName || row.LEADER_NAME,
+          completed: 0,
+          coached: 0,
+          months: Object.fromEntries(range.months.map(month => [month, { completed:0, coached:0 }]))
+        });
+      });
+      const nameMap = new Map();
+      roleMap.forEach(entry => {
+        const key = normalisePersonName(entry.name);
+        if (!key) return;
+        if (!nameMap.has(key)) nameMap.set(key, []);
+        nameMap.get(key).push(entry);
+      });
+      departmentScoped("fieldLeadership", DATA.fieldLeadership || []).forEach(row => {
+        const dt = rowDateTime(row, "fieldLeadership");
+        if (!dt) return;
+        const monthKey = isoMonth(dt);
+        if (!monthSet.has(monthKey)) return;
+        if (String(row.FieldLeadershipStatus || "").toLowerCase() !== "closed") return;
+        const key = normalisePersonName(fieldLeadershipIdentifier(row));
+        const entries = nameMap.get(key) || [];
+        entries.forEach(entry => {
+          entry.completed += 1;
+          entry.months[monthKey].completed += 1;
+          if (["1","true","yes"].includes(String(row.CoachedActivityFlag || "").toLowerCase())) {
+            entry.coached += 1;
+            entry.months[monthKey].coached += 1;
+          }
+        });
+      });
+      return [...roleMap.values()].sort((a,b) =>
+        String(a.department).localeCompare(String(b.department))
+        || String(a.position || "").localeCompare(String(b.position || ""))
+        || String(a.name).localeCompare(String(b.name))
+      );
+    }
+    function monthlyLeadershipKpiHtml() {
+      const range = leadershipMonthRange();
+      const rows = leadershipMonthlyRows();
+      if (!rows.length) return `<div class="muted">No active leadership-role people found for the selected department.</div>`;
+      const monthlyFlTarget = 8;
+      const monthlyCoachedTarget = 4;
+      const flTarget = monthlyFlTarget * range.months.length;
+      const coachedTarget = monthlyCoachedTarget * range.months.length;
+      const maxValue = Math.max(10, ...rows.map(row => Math.max(row.completed, row.coached)));
+      const byDept = new Map();
+      rows.forEach(row => {
+        if (!byDept.has(row.department)) byDept.set(row.department, []);
+        byDept.get(row.department).push(row);
+      });
+      const summary = [
+        ["People tracked", rows.length],
+        ["Met FL target", rows.filter(row => row.completed >= flTarget).length],
+        ["Met coached target", rows.filter(row => row.coached >= coachedTarget).length],
+        ["Below both", rows.filter(row => row.completed < flTarget && row.coached < coachedTarget).length]
+      ];
+      const deptHtml = [...byDept.entries()].map(([dept, deptRows]) => {
+        const bars = deptRows.map(row => {
+          const flPct = Math.min(100, (row.completed / flTarget) * 100);
+          const coachedPct = Math.min(100, (row.coached / coachedTarget) * 100);
+          const flClass = row.completed >= flTarget ? "" : row.completed >= flTarget * .5 ? "short" : "low";
+          const coachClass = row.coached >= coachedTarget ? "" : row.coached >= coachedTarget * .5 ? "short" : "low";
+          const monthChips = range.months.map(month => {
+            const monthCounts = row.months[month] || { completed:0, coached:0 };
+            const cls = monthCounts.completed >= monthlyFlTarget && monthCounts.coached >= monthlyCoachedTarget
+              ? "good"
+              : monthCounts.completed || monthCounts.coached ? "partial" : "";
+            return `<span class="kpi-month-chip ${cls}" title="${escapeHtml(monthLabel(month))}: ${monthCounts.completed} of 8 FLs, ${monthCounts.coached} of 4 coached">${escapeHtml(shortMonthLabel(month))} FL ${monthCounts.completed}/8 | C ${monthCounts.coached}/4</span>`;
+          }).join("");
+          return `<div class="kpi-person-row">
+            <div>
+              <div class="kpi-person-name">${escapeHtml(row.name)}</div>
+              <div class="kpi-person-role">${escapeHtml(row.position || "Role not recorded")}${row.leader ? " | Leader: " + escapeHtml(row.leader) : ""}</div>
+            </div>
+            <div class="kpi-person-bars">
+              <div class="kpi-progress">
+                <div class="kpi-progress-label">FLs</div>
+                <div class="kpi-progress-track"><div class="kpi-progress-fill ${flClass}" style="width:${flPct}%"></div></div>
+                <div class="kpi-progress-value">${row.completed} / ${flTarget}</div>
+              </div>
+              <div class="kpi-progress">
+                <div class="kpi-progress-label">Coached</div>
+                <div class="kpi-progress-track"><div class="kpi-progress-fill coached ${coachClass}" style="width:${coachedPct}%"></div></div>
+                <div class="kpi-progress-value">${row.coached} / ${coachedTarget}</div>
+              </div>
+            </div>
+            <div class="kpi-month-breakdown">${monthChips}</div>
+          </div>`;
+        }).join("");
+        return `<div class="kpi-dept"><h3>${escapeHtml(dept)}</h3><div class="kpi-list">${bars}</div></div>`;
+      }).join("");
+      return `<div class="kpi-tracker">
+        ${leadershipMonthControl()}
+        <div class="kpi-summary">${summary.map(([label,value]) => `<div class="mini"><strong>${value}</strong><span>${escapeHtml(label)}</span></div>`).join("")}</div>
+        <div class="kpi-legend">
+          <span><i class="kpi-key"></i>Completed FLs target 8</span>
+          <span><i class="kpi-key coached"></i>Coached FLs target 4</span>
+          <span>Each selected month is checked separately; row totals use monthly targets multiplied by selected months.</span>
+        </div>
+        ${deptHtml}
+      </div>`;
     }
     function chart(id, counts, color="") {
       const max = Math.max(...counts.map(([,v])=>v), 1);
@@ -382,12 +855,61 @@
     function barHtml(rows, splitField) {
       const counts = countBy(rows, splitField).slice(0,12);
       const max = Math.max(...counts.map(([,v])=>v), 1);
-      return counts.map(([label,value]) => `<div class="bar-row"><div class="bar-label">${escapeHtml(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,value/max*100)}%"></div></div><div class="bar-value">${value}</div></div>`).join("") || `<div class="muted">No records for selected range.</div>`;
+      return counts.map(([label,value]) => `<div class="bar-row" title="${escapeHtml(label)}: ${value}"><div class="bar-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,value/max*100)}%"></div></div><div class="bar-value">${value}</div></div>`).join("") || `<div class="muted">No records for selected range.</div>`;
     }
     function barCountsHtml(counts) {
       const visible = counts.slice(0,12);
       const max = Math.max(...visible.map(([,v])=>v), 1);
-      return visible.map(([label,value]) => `<div class="bar-row"><div class="bar-label">${escapeHtml(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,value/max*100)}%"></div></div><div class="bar-value">${value}</div></div>`).join("") || `<div class="muted">No records for selected range.</div>`;
+      return visible.map(([label,value]) => `<div class="bar-row" title="${escapeHtml(label)}: ${value}"><div class="bar-label" title="${escapeHtml(label)}">${escapeHtml(label)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,value/max*100)}%"></div></div><div class="bar-value">${value}</div></div>`).join("") || `<div class="muted">No records for selected range.</div>`;
+    }
+    function injuryBodyLabel(row) {
+      const directFields = ["BodilyLocation", "BodyLocation", "InjuryBodilyLocation", "BodilyLocationName", "BodyPart", "InjuredBodyPart"];
+      const direct = directFields.map(field => row[field]).find(value => value && String(value).trim());
+      const text = String(direct || row.InjuryBehaviouralSubcategory || row.InjuryBehaviouralCategory || row.InjuryClassification || "").toLowerCase();
+      if (!text || text.includes("no injury recorded")) return "";
+      if (/eye|face|head|tooth|teeth|mouth|ear|nose/.test(text)) return "Head / eyes";
+      if (/hand|arm|finger|wrist|elbow|shoulder|pinch/.test(text)) return "Hands / arms";
+      if (/foot|feet|leg|knee|ankle|ascending|descending|path/.test(text)) return "Legs / feet";
+      if (/back|torso|body|posture|lifting|lowering|twisting|push|pull|strain|sprain/.test(text)) return "Back / torso";
+      if (/occupational illness|illness|exposure|respiratory|heat|dust|chemical/.test(text)) return "Exposure / illness";
+      return "Other injury focus";
+    }
+    function bodyPartClass(value, max) {
+      if (!value) return "";
+      const ratio = value / Math.max(max, 1);
+      return ratio >= .75 ? "hot-alert" : ratio >= .5 ? "hot-high" : ratio >= .25 ? "hot-med" : "hot-low";
+    }
+    function heatStyle(value, max) {
+      if (!value) return "";
+      const ratio = value / Math.max(max, 1);
+      if (ratio >= .75) return "background:#c6282f";
+      if (ratio >= .5) return "background:#ff6b35";
+      if (ratio >= .25) return "background:#ff9f1c";
+      return "background:#ffd84d";
+    }
+    function injuryBodyFocusHtml(rows) {
+      const counts = countByGetter(rows, injuryBodyLabel).filter(([label]) => label !== "Not recorded");
+      const total = counts.reduce((sum, [,value]) => sum + value, 0);
+      if (!total) return `<p class="chart-title">Injury body focus</p><div class="body-focus"><div class="muted">No injury body focus recorded for selected range.</div></div>`;
+      const map = Object.fromEntries(counts);
+      const max = Math.max(...counts.map(([,value]) => value), 1);
+      const cls = label => bodyPartClass(map[label] || 0, max);
+      const rowsHtml = counts.slice(0,6).map(([label,value]) => {
+        const pct = total ? Math.round(value / total * 100) : 0;
+        return `<div class="body-row" title="${escapeHtml(label)}: ${value} (${pct}%)"><span title="${escapeHtml(label)}">${escapeHtml(label)}</span><div class="bar-track"><div class="bar-fill" style="width:${Math.max(8,value/max*100)}%; ${heatStyle(value, max)}"></div></div><strong>${value} · ${pct}%</strong></div>`;
+      }).join("");
+      return `<p class="chart-title">Injury body focus</p><div class="body-focus">
+        <svg class="body-map" viewBox="0 0 140 210" role="img" aria-label="Injury body focus heat map">
+          <circle class="body-part ${cls("Head / eyes")}" cx="70" cy="24" r="18"><title>Head / eyes: ${map["Head / eyes"] || 0}</title></circle>
+          <rect class="body-part ${cls("Back / torso")}" x="48" y="48" width="44" height="74" rx="17"><title>Back / torso: ${map["Back / torso"] || 0}</title></rect>
+          <path class="body-part ${cls("Hands / arms")}" d="M45 54 L25 104 Q22 113 30 116 Q38 118 42 108 L58 66 Z"><title>Hands / arms: ${map["Hands / arms"] || 0}</title></path>
+          <path class="body-part ${cls("Hands / arms")}" d="M95 54 L115 104 Q118 113 110 116 Q102 118 98 108 L82 66 Z"><title>Hands / arms: ${map["Hands / arms"] || 0}</title></path>
+          <path class="body-part ${cls("Legs / feet")}" d="M54 120 L46 188 Q45 199 56 199 Q64 199 65 189 L70 130 Z"><title>Legs / feet: ${map["Legs / feet"] || 0}</title></path>
+          <path class="body-part ${cls("Legs / feet")}" d="M86 120 L94 188 Q95 199 84 199 Q76 199 75 189 L70 130 Z"><title>Legs / feet: ${map["Legs / feet"] || 0}</title></path>
+          <circle class="body-part ${cls("Exposure / illness")}" cx="70" cy="91" r="11"><title>Exposure / illness: ${map["Exposure / illness"] || 0}</title></circle>
+        </svg>
+        <div class="body-list">${rowsHtml}</div>
+      </div>`;
     }
     function renderMetrics() {
       const incidents = filtered("incidents");
@@ -396,14 +918,15 @@
       const hazards = filtered("hazards");
       const inspections = filtered("inspections");
       const mediumHigh = mediumHighHazards(hazards);
-      const nonCompliant = nonCompliantInspections(inspections);
+      const completedInspectionRows = completedInspections(inspections);
+      const nonCompliant = nonCompliantInspections(completedInspectionRows);
       const metrics = [
         ["Open ITRs", openItrs().length, "Close flag = No", "primary"],
         ["Incidents", new Set(incidents.map(r => r.Incident_BK)).size, `${incidents.filter(r => r.WorkRelatedInjury === "Yes").length} work related injuries`, "warn"],
         ["Field Leaderships", fl.length, `${fl.reduce((s,r)=>s+Number(r.AtRiskBehaviourCount||0),0)} at-risk behaviours`, ""],
         ["Open Actions", openActions(actions).length, `${openActions(actions).filter(r => r.DueBucket === "Overdue").length} overdue`, "warn"],
         ["Hazards", mediumHigh.length, "medium-high risk identified", ""],
-        ["Workplace Inspections", nonCompliant.length, "not compliant", ""],
+        ["Workplace Inspections", completedInspectionRows.length, `${nonCompliant.length} not compliant`, ""],
       ];
       document.getElementById("metrics").innerHTML = metrics.map(([name,value,note,cls]) => `<div class="metric ${cls}"><div class="name">${escapeHtml(name)}</div><div class="value">${escapeHtml(value)}</div><div class="note">${escapeHtml(note)}</div></div>`).join("");
     }
@@ -531,6 +1054,23 @@
       </tr>`).join("");
       return `<div class="itr-actions"><table><thead><tr><th>Action</th><th>Status</th><th>Due</th><th>Responsible</th><th>Criticality</th><th>Description</th></tr></thead><tbody>${rows}</tbody></table></div>`;
     }
+    function itrProgressUpdates(itrId) {
+      return (DATA.itrUpdates || [])
+        .filter(update => update.Key_ITR === itrId)
+        .sort((a,b) => String(b.DateEntered || "").localeCompare(String(a.DateEntered || "")));
+    }
+    function itrUpdateTable(updates) {
+      if (!updates.length) return `<div class="muted">No progress updates recorded for this ITR.</div>`;
+      const rows = updates.slice(0,20).map(update => `<tr>
+        <td>${escapeHtml(update.UpdatedID || update.StatusUpdates_BK || "")}</td>
+        <td>${escapeHtml(simpleDate(update.DateEntered) || "Not recorded")}</td>
+        <td>${escapeHtml(update.CreatedByName || "Not recorded")}</td>
+        <td>${escapeHtml(update.UpdateDetails || update.Summary || "No update details recorded.")}</td>
+        <td>${escapeHtml(update.FileCount ?? 0)}</td>
+        <td>${escapeHtml(update.Key_Action || "")}</td>
+      </tr>`).join("");
+      return `<div class="itr-actions"><table><thead><tr><th>Update ID</th><th>Date entered</th><th>Created by</th><th>Update details</th><th>File count</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    }
     function renderItrRegister() {
       const search = state.itrSearch.toLowerCase();
       const openRowsAll = allOpenItrs();
@@ -568,13 +1108,14 @@
       const cards = rows.map(row => {
         const isClosed = String(row.IdentifyRectify_CloseRecordFlag).toLowerCase() === "yes";
         const actions = itrActions(row.IdentifyRectify_BK);
+        const updates = itrProgressUpdates(row.IdentifyRectify_BK);
         const openActionCount = actions.filter(action => String(action.Status || "").toLowerCase() === "open").length;
         const owner = row.Employee_ProposedSMEChampion_Name || row.Employee_ProposedSupervisor_Name || row.Employee_Supervisor_Name || row.Employee_IdentifiedBy_Name || "Not recorded";
         return `<details class="itr-card">
           <summary class="itr-card-head">
             <div>
               <div class="itr-summary-line">
-                <div class="itr-summary-item"><label>ITR</label><div class="itr-id">${escapeHtml(row.IdentifyRectify_BK)}</div><div class="muted">${escapeHtml(row.CurrentStatus || "")}${row.CurrentStage ? " / " + escapeHtml(row.CurrentStage) : ""}</div></div>
+                <div class="itr-summary-item"><label>ITR</label><div class="itr-id">${escapeHtml(row.IdentifyRectify_BK)}</div><div class="muted">${escapeHtml(row.CurrentStatus || "")}${row.CurrentStage ? " / " + escapeHtml(row.CurrentStage) : ""}</div>${recordLinkHtml(row, { linkUrl: r => r.LinkToNewITR || r.LinkToLegacy })}</div>
                 <div class="itr-summary-item"><label>Responsible</label>${escapeHtml(owner)}</div>
                 <div class="itr-summary-item"><label>Department / area</label>${escapeHtml(row.Tier07FullName || row.Tier06FullName || "Not recorded")}</div>
                 <div class="itr-summary-item"><label>Location</label>${escapeHtml(row.IdentifyRectify_Location || "Not recorded")}</div>
@@ -602,6 +1143,7 @@
               <div><p class="chart-title">Expected benefits</p><div class="itr-text-box">${escapeHtml(row.IdentifyRectify_ListExpectedBenefits || "No expected benefits recorded.")}</div></div>
             </div>
             <div><p class="chart-title">Associated actions attached to ITR</p>${itrActionTable(actions)}</div>
+            <div><p class="chart-title">ITR progress updates</p>${itrUpdateTable(updates)}</div>
             ${isClosed ? `<div class="itr-grid">
               <div class="itr-field"><label>Closed / completed by</label>${escapeHtml(row.Employee_CompletedBy_Name || row.IdentifyRectify_CompletedByType || "Not recorded")}</div>
               <div class="itr-field"><label>Completion date</label>${escapeHtml(simpleDate(row.IdentifyRectify_CompletionDate) || "Not recorded")}</div>
@@ -609,6 +1151,7 @@
               <div class="itr-field"><label>Health and safety review</label>${escapeHtml(row.HealthSafetyReview_CompleteFlag || "Not recorded")}</div>
               <div class="itr-field" style="grid-column:1/-1"><label>Closure comments</label>${escapeHtml(row.Completion_Comments || row.CloseMessage || "No closure comments recorded.")}</div>
             </div>` : ""}
+            ${allAvailableFieldsHtml(row, "All available ITR fields")}
           </div>
         </details>`;
       }).join("");
@@ -664,6 +1207,340 @@
       const filteredRows = filteredQuickRows(rows, state.quickFilters.incidents);
       return smallTable(filteredRows, columns, "tall", { filterGroup:"incidents" });
     }
+    function numValue(value) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : 0;
+    }
+    function snapshotDate() {
+      return simpleDate(SNAPSHOT.generatedAt) || MAX_DATE;
+    }
+    function latestCompletedDateFor(rows, field) {
+      const asAt = snapshotDate();
+      const dates = rows.map(row => simpleDate(row[field])).filter(Boolean).filter(date => date <= asAt).sort();
+      return dates.pop() || rows.map(row => simpleDate(row[field])).filter(Boolean).sort().pop() || "";
+    }
+    function cleanText(value) {
+      return String(value || "").trim();
+    }
+    function latestKpiMonthlyRows() {
+      const rows = DATA.kpiMonthly || [];
+      const latest = latestCompletedDateFor(rows, "LastDayOfCalendarMonth");
+      const sameMonth = rows.filter(row => simpleDate(row.LastDayOfCalendarMonth) === latest);
+      const groupRows = sameMonth.filter(row => cleanText(row.ReportingGroup).toLowerCase() === "iron bridge");
+      const noLowerLevel = groupRows.filter(row => !cleanText(row.ReportingDepartment) && !cleanText(row.ReportingSite));
+      const siteRows = groupRows.filter(row => cleanText(row.ReportingSite).toLowerCase() === "iron bridge");
+      return noLowerLevel.length ? noLowerLevel : siteRows.length ? siteRows : groupRows.length ? groupRows : sameMonth;
+    }
+    function latestLsiRows() {
+      const rows = DATA.leadingSafetyIndex || [];
+      const latest = latestCompletedDateFor(rows, "LASTDAYOFCALENDARMONTH");
+      const sameMonth = rows.filter(row => simpleDate(row.LASTDAYOFCALENDARMONTH) === latest);
+      const groupRows = sameMonth.filter(row => cleanText(row.REPORTINGGROUP).toLowerCase() === "iron bridge");
+      const noLowerLevel = groupRows.filter(row => !cleanText(row.REPORTINGDEPARTMENT) && !cleanText(row.REPORTINGSITE) && !cleanText(row.REPORTINGTEAM));
+      const siteRows = groupRows.filter(row => cleanText(row.REPORTINGSITE).toLowerCase() === "iron bridge");
+      return noLowerLevel.length ? noLowerLevel : siteRows.length ? siteRows : groupRows.length ? groupRows : sameMonth;
+    }
+    function ratePerMillion(numerator, hours) {
+      return hours > 0 ? (numerator * 1000000) / hours : null;
+    }
+    function formatRate(value, decimals = 2) {
+      return value === null || !Number.isFinite(value) ? "Not recorded" : value.toFixed(decimals);
+    }
+    function formatWhole(value) {
+      return Number.isFinite(Number(value)) ? Math.round(Number(value)).toLocaleString("en-AU") : "Not recorded";
+    }
+    function lsiScore(rows) {
+      const byMeasure = new Map();
+      rows.forEach(row => {
+        const measure = cleanText(row.MEASURE) || "Not recorded";
+        const current = byMeasure.get(measure) || { value:0, denominator:0, hours:0, target:0, weighting:0 };
+        current.value += numValue(row.MEASURE_VALUE_ROLLING_12_MONTHS);
+        current.denominator += numValue(row.MEASURE_DENOMINATOR_ROLLING_12_MONTHS);
+        current.hours += numValue(row.HOURS_ROLLING_12_MONTHS);
+        current.target = current.target || numValue(row.FREQUENCY_TARGET);
+        current.weighting = current.weighting || numValue(row.WEIGHTING);
+        byMeasure.set(measure, current);
+      });
+      return [...byMeasure.values()].reduce((sum, item) => {
+        const denominator = item.denominator || item.hours;
+        if (!item.value || !denominator || !item.target || !item.weighting) return sum;
+        const frequency = (item.value / denominator) * 6350;
+        return sum + ((frequency / item.target) * item.weighting);
+      }, 0);
+    }
+    function lsiScopeName(dept) {
+      const name = cleanText(dept);
+      if (name === "Iron Bridge CHF & West Canning Basin") return "Iron Bridge CHF";
+      return name;
+    }
+    function selectedLsiRows() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      const all = selected.includes("All departments");
+      const scopes = new Set(selected.filter(name => name !== "All departments").map(lsiScopeName).map(name => name.toLowerCase()));
+      return (DATA.leadingSafetyIndex || []).filter(row => {
+        if (cleanText(row.REPORTINGGROUP).toLowerCase() !== "iron bridge") return false;
+        if (all) return true;
+        const site = cleanText(row.REPORTINGSITE).toLowerCase();
+        const team = cleanText(row.REPORTINGTEAM).toLowerCase();
+        return scopes.has(site) || scopes.has(team);
+      });
+    }
+    function selectedLsiSummaryRows() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      const all = selected.includes("All departments");
+      const scopes = new Set(selected.filter(name => name !== "All departments").map(lsiScopeName).map(name => name.toLowerCase()));
+      return (DATA.leadingSafetyIndexSummary || []).filter(row => {
+        if (cleanText(row.ReportingGroup).toLowerCase() !== "iron bridge") return false;
+        if (all) return true;
+        const site = cleanText(row.ReportingSite).toLowerCase();
+        const team = cleanText(row.ReportingTeam).toLowerCase();
+        return scopes.has(site) || scopes.has(team);
+      });
+    }
+    function lsiSummaryKind(row) {
+      const type = cleanText(row.MeasureType).toLowerCase();
+      const group = cleanText(row.MeasureGroup).toLowerCase();
+      const measure = cleanText(row.MeasureName || row.Measure).toLowerCase();
+      if (type.includes("detractor") || group.includes("overdue") || group.includes("injur") || group.includes("incident") || group.includes("fatigue") || group.includes("shutdown") || group.includes("breakdown") || measure.includes("overdue")) return "detractor";
+      return "promoter";
+    }
+    function lsiSummaryContribution(row, period = "Rolling365") {
+      const valueField = period === "FYTD" ? "MeasureValue_RollingFYTD" : "Measure_Value_Rolling365";
+      const denominatorField = period === "FYTD" ? "Measure_Denominator_RollingFYTD" : "Measure_Denominator_Rolling365";
+      const value = numValue(row[valueField]);
+      const denominator = numValue(row[denominatorField]);
+      const target = numValue(row.Target);
+      const weight = numValue(row.Weight);
+      if (!value || !denominator || !target || !weight) return 0;
+      const calcType = cleanText(row.CalculationType).toLowerCase();
+      const ratio = value / denominator;
+      const frequency = calcType.includes("frequency") ? ratio * 1000000 : ratio;
+      return (frequency / target) * weight;
+    }
+    function lsiSummaryScore(rows, period = "Rolling365") {
+      if (!rows.length) return 0;
+      return rows.reduce((score, row) => {
+        const contribution = lsiSummaryContribution(row, period);
+        return score + (lsiSummaryKind(row) === "detractor" ? -contribution : contribution);
+      }, 100);
+    }
+    function lsiSummaryByCategory(rows, period = "Rolling365") {
+      const byCategory = new Map();
+      rows.forEach(row => {
+        const category = cleanText(row.MeasureGroup) || "Other";
+        const current = byCategory.get(category) || { contribution:0, kind:lsiSummaryKind(row), sentences:new Set() };
+        const contribution = lsiSummaryContribution(row, period);
+        current.contribution += lsiSummaryKind(row) === "detractor" ? -contribution : contribution;
+        current.kind = current.contribution < 0 ? "detractor" : "promoter";
+        const sentence = cleanText(row.CategorySentence || row.Sentence);
+        if (sentence) current.sentences.add(sentence);
+        byCategory.set(category, current);
+      });
+      return [...byCategory.entries()].map(([category, item]) => ({
+        category,
+        contribution:item.contribution,
+        kind:item.contribution < 0 ? "detractor" : "promoter",
+        insight:[...item.sentences][0] || ""
+      })).sort((a,b) => Math.abs(b.contribution) - Math.abs(a.contribution));
+    }
+    function lsiMeasureKind(measure) {
+      const m = cleanText(measure).toUpperCase();
+      if (m.includes("OVERDUE") || m.includes("LOW_SCORE") || m === "FIELD_LEADERSHIP_NO_CONTROL" || m === "HAZARD_HIGH_RISK" || m.startsWith("INCIDENT_") || m.startsWith("INJURY_") || m.startsWith("SHUTDOWN_") || m.startsWith("SECONDS_")) return "detractor";
+      return "promoter";
+    }
+    function lsiMeasureCategory(measure) {
+      const m = cleanText(measure).toUpperCase();
+      if (m.startsWith("ACTION_")) return "Actions";
+      if (m.startsWith("BEHAVIOUR_")) return "Behaviour";
+      if (m.startsWith("CCM_")) return "Critical Control Monitoring";
+      if (m.startsWith("FIELD_LEADERSHIP")) return "Field Leadership";
+      if (m.startsWith("HAZARD_")) return "Hazards";
+      if (m.startsWith("INCIDENT_")) return "Incidents";
+      if (m.startsWith("INJURY_")) return "Injury";
+      if (m.startsWith("SHUTDOWN_")) return "Shutdown";
+      if (m.startsWith("SECONDS_")) return "Breakdown Work";
+      if (m.includes("ITR")) return "Identify Then Rectify";
+      return "Other";
+    }
+    function lsiFriendlyMeasure(measure) {
+      return cleanText(measure)
+        .replace(/^ACTION_ON_TIME_/, "Actions on time - ")
+        .replace(/^ACTION_OVERDUE_/, "Actions overdue - ")
+        .replace(/^BEHAVIOUR_1_POSITIVE$/, "Positive behaviours")
+        .replace(/^BEHAVIOUR_2_LOW_RISK$/, "At-risk behaviours - Low")
+        .replace(/^BEHAVIOUR_3_MAJOR_RISK$/, "At-risk behaviours - Major")
+        .replace(/^BEHAVIOUR_4_SERIOUS_RISK$/, "At-risk behaviours - Serious")
+        .replace(/^BEHAVIOUR_5_CATASTROPHIC_RISK$/, "At-risk behaviours - Catastrophic")
+        .replace(/^CCM_HIGH_SCORE$/, "Critical control monitoring - High score")
+        .replace(/^CCM_LOW_SCORE$/, "Critical control monitoring - Low score")
+        .replace(/^FIELD_LEADERSHIP_NO_CONTROL$/, "Field leadership no control")
+        .replace(/^HAZARD_HIGH_RISK$/, "Hazard - High risk")
+        .replace(/^HAZARD_LOW_RISK$/, "Hazard - Low risk")
+        .replace(/^INCIDENT_MINOR$/, "Minor incidents")
+        .replace(/^INCIDENT_SIGNIFICANT$/, "Significant incidents")
+        .replace(/^INJURY_RECORDABLE$/, "Total recordable injuries")
+        .replace(/^SHUTDOWN_HOURS$/, "Shutdown hours")
+        .replace(/^SECONDS_DURATION$/, "Breakdown maintenance - Duration")
+        .replace(/^SECONDS_EFFECTIVE$/, "Breakdown maintenance - Hours spend")
+        .replace(/1_CRITICALITY_1LOW/g, "Criticality low")
+        .replace(/1_CRITICALITY_2MED/g, "Criticality medium")
+        .replace(/1_CRITICALITY_3HIGH/g, "Criticality high")
+        .replace(/_/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    function lsiContributionByMeasure(rows, rolling = false) {
+      const byMeasure = new Map();
+      rows.forEach(row => {
+        const measure = cleanText(row.MEASURE) || "Not recorded";
+        const current = byMeasure.get(measure) || { value:0, denominator:0, hours:0, target:0, weighting:0 };
+        current.value += numValue(rolling ? row.MEASURE_VALUE_ROLLING_12_MONTHS : row.MEASURE_VALUE);
+        current.denominator += numValue(rolling ? row.MEASURE_DENOMINATOR_ROLLING_12_MONTHS : row.MEASURE_DENOMINATOR);
+        current.hours += numValue(rolling ? row.HOURS_ROLLING_12_MONTHS : row.HOURS);
+        current.target = current.target || numValue(row.FREQUENCY_TARGET);
+        current.weighting = current.weighting || numValue(row.WEIGHTING);
+        byMeasure.set(measure, current);
+      });
+      return [...byMeasure.entries()].map(([measure, item]) => {
+        const denominator = item.denominator || item.hours;
+        const frequency = item.value && denominator ? (item.value / denominator) * 6350 : 0;
+        const contribution = item.target && item.weighting ? (frequency / item.target) * item.weighting : 0;
+        return { measure, label: lsiFriendlyMeasure(measure), category: lsiMeasureCategory(measure), kind: lsiMeasureKind(measure), contribution, value:item.value };
+      }).filter(item => item.contribution > 0).sort((a,b) => b.contribution - a.contribution);
+    }
+    function lsiMonthLabel(date) {
+      const d = toDate(simpleDate(date));
+      return d ? d.toLocaleDateString("en-AU", { month:"short" }) : "";
+    }
+    function lsiFy27ChangePanelHtml(latestDate) {
+      const fy27Active = latestDate && latestDate >= "2026-07-01";
+      const stateText = fy27Active ? "FY27 logic applies to the displayed month where reflected in Snowflake." : "Displayed LSI month is pre-FY27; July rows will reflect these approved changes once loaded.";
+      const changes = [
+        ["Workplace Inspections", "Promoter", "Targets recalibrated to the current activity level, expressed per 1 million hours worked.", "promoter"],
+        ["Overdue Actions", "Detractor", "Moves from equal overdue-action count to total days overdue divided by total actions.", "detractor"],
+        ["Overdue Hazards", "Detractor", "New detractor for hazards open more than 14 days, measured by days overdue relative to total hazards.", "detractor"],
+        ["Breakdown Work", "Detractor", "Tightened to SAP PM01 records with priority 1, breakdown indicator, and PM activity type 101-104.", "detractor"]
+      ];
+      return `<div class="lsi-fy27"><h3>FY27 LSI variable changes</h3><div class="lsi-fy27-grid">
+        ${changes.map(([name,type,detail,cls]) => `<div class="lsi-change ${cls}"><strong>${escapeHtml(name)}</strong><span>${escapeHtml(type)}</span><p>${escapeHtml(detail)}</p></div>`).join("")}
+      </div><div class="lsi-note">${escapeHtml(stateText)} Source reference: LSI FY27 Changes briefing, effective 1 July 2026 with FY27 data alignment from 6 July 2026 at 18:00.</div></div>`;
+    }
+    function selectedFytdLsiRows() {
+      const rows = selectedLsiRows();
+      const range = lsiMonthRange();
+      return rows.filter(row => {
+        const d = simpleDate(row.LASTDAYOFCALENDARMONTH);
+        return d && range.months.includes(d.slice(0,7));
+      });
+    }
+    function selectedFytdLsiSummaryRows() {
+      const rows = selectedLsiSummaryRows();
+      const range = lsiMonthRange();
+      return rows.filter(row => {
+        const d = simpleDate(row.Date);
+        return d && range.months.includes(d.slice(0,7));
+      });
+    }
+    function lsiMonthlySummaryHtml() {
+      const summaryRows = selectedFytdLsiSummaryRows();
+      const rows = summaryRows.length ? summaryRows : selectedFytdLsiRows();
+      if (!rows.length) return "";
+      const usingSummary = summaryRows.length > 0;
+      const dateField = usingSummary ? "Date" : "LASTDAYOFCALENDARMONTH";
+      const latestDate = rows.map(row => simpleDate(row[dateField])).filter(Boolean).sort().pop();
+      const latestRows = rows.filter(row => simpleDate(row[dateField]) === latestDate);
+      const latestScore = usingSummary ? lsiSummaryScore(latestRows, "Rolling365") : lsiScore(latestRows);
+      const byMonth = new Map();
+      rows.forEach(row => {
+        const key = simpleDate(row[dateField]);
+        if (!key) return;
+        if (!byMonth.has(key)) byMonth.set(key, []);
+        byMonth.get(key).push(row);
+      });
+      const months = [...byMonth.entries()].sort(([a],[b]) => a.localeCompare(b)).map(([date, monthRows]) => [date, usingSummary ? lsiSummaryScore(monthRows, "Rolling365") : lsiScore(monthRows)]);
+      const maxScore = Math.max(...months.map(([,score]) => score), 1);
+      const monthBars = months.map(([date, score]) => `<div class="lsi-month ${score < latestScore ? "detractor" : ""}" title="${escapeHtml(lsiMonthLabel(date))}: ${formatRate(score,1)}"><div class="lsi-month-bar" style="height:${Math.max(6, score / maxScore * 100)}%"></div><span>${escapeHtml(lsiMonthLabel(date))}</span></div>`).join("");
+      const latestContrib = usingSummary ? lsiSummaryByCategory(latestRows, "Rolling365") : lsiContributionByMeasure(latestRows, true);
+      const promoters = latestContrib.filter(item => item.kind === "promoter").slice(0,8);
+      const detractors = latestContrib.filter(item => item.kind === "detractor").slice(0,8);
+      const factorRows = (items, cls) => {
+        const max = Math.max(...items.map(item => Math.abs(item.contribution)), 1);
+        return items.map(item => {
+          const label = item.label || item.category;
+          const category = item.category || "Other";
+          const insight = item.insight ? ` | ${item.insight}` : "";
+          return `<div class="lsi-factor ${cls}" title="${escapeHtml(label)} | ${escapeHtml(category)} | contribution ${formatRate(Math.abs(item.contribution),2)}${escapeHtml(insight)}"><label>${escapeHtml(category)}</label><div class="bar-track"><div class="bar-fill" style="width:${Math.max(5,Math.abs(item.contribution)/max*100)}%"></div></div><small>${formatRate(Math.abs(item.contribution),1)}</small></div>`;
+        }).join("") || `<div class="muted">No ${cls} measures recorded for this month.</div>`;
+      };
+      const period = latestDate ? toDate(latestDate).toLocaleDateString("en-AU", { month:"long", year:"numeric" }) : "selected month";
+      return `<section class="lsi-card"><h2>Monthly Leading Safety Index</h2><div class="lsi-panel">
+        ${lsiMonthControl()}
+        <div class="lsi-top">
+          <div class="lsi-gauge"><div class="lsi-score">${formatRate(latestScore,1)}<span>${escapeHtml(period)} LSI</span></div></div>
+          <div class="lsi-trend"><p class="chart-title">Monthly trend across selected LSI period</p><div class="lsi-months">${monthBars}</div><div class="lsi-note">Uses DA_HEALTHANDSAFETY.SELFSERVICE.LeadingSafetyIndexSummary, the Snowflake view behind the Power BI LSI semantic model. Use the LSI month controls and department buttons to review previous months, years and department combinations.</div></div>
+        </div>
+        <div class="lsi-breakdown">
+          <div class="lsi-stack promoter"><h3>Leading Promoters</h3>${factorRows(promoters, "promoter")}</div>
+          <div class="lsi-stack detractor"><h3>Leading Detractors</h3>${factorRows(detractors, "detractor")}</div>
+        </div>
+        ${lsiFy27ChangePanelHtml(latestDate)}
+      </div></section>`;
+    }
+    function safetyPerformanceHtml() {
+      const kpiRows = latestKpiMonthlyRows();
+      const lsiRows = latestLsiRows();
+      if (!kpiRows.length && !lsiRows.length) return "";
+      const latestKpiDate = latestCompletedDateFor(kpiRows, "LastDayOfCalendarMonth");
+      const latestLsiDate = latestCompletedDateFor(lsiRows, "LASTDAYOFCALENDARMONTH");
+      const triRolling = kpiRows.reduce((sum, row) => sum + numValue(row.TRI_Rolling12), 0);
+      const siRolling = kpiRows.reduce((sum, row) => sum + numValue(row.SI_Rolling12), 0);
+      const ciRolling = kpiRows.reduce((sum, row) => sum + numValue(row.CI_Rolling12), 0);
+      const rollingHours = kpiRows.reduce((sum, row) => sum + numValue(row.WrkHrs_Rolling12), 0);
+      const trifr = ratePerMillion(triRolling, rollingHours);
+      const sifr = ratePerMillion(siRolling, rollingHours);
+      const cifr = ratePerMillion(ciRolling, rollingHours);
+      const lsi = lsiScore(lsiRows);
+      const sourceDate = [latestKpiDate, latestLsiDate].filter(Boolean).sort().pop() || "Not recorded";
+      return `<section class="performance-card"><h2>Iron Bridge Performance Rates</h2><div class="performance-panel">
+        <div class="performance-hero">
+          <article class="perf-metric rate">
+            <div class="perf-kicker">Rolling 12 month</div>
+            <div class="perf-value">${formatRate(trifr, 2)}</div>
+            <div class="perf-label">TRIFR</div>
+            <div class="perf-sub">Total recordable injury frequency rate across Iron Bridge.</div>
+          </article>
+          <article class="perf-metric rate">
+            <div class="perf-kicker">Rolling 12 month</div>
+            <div class="perf-value">${formatRate(cifr, 2)}</div>
+            <div class="perf-label">CIFR</div>
+            <div class="perf-sub">Critical injury frequency rate across Iron Bridge.</div>
+          </article>
+          <article class="perf-metric rate">
+            <div class="perf-kicker">Rolling 12 month</div>
+            <div class="perf-value">${formatRate(sifr, 2)}</div>
+            <div class="perf-label">SIFR</div>
+            <div class="perf-sub">Significant incident frequency rate across Iron Bridge.</div>
+          </article>
+          <article class="perf-metric lsi">
+            <div class="perf-kicker">Rolling 12 month</div>
+            <div class="perf-value">${formatRate(lsi, 1)}</div>
+            <div class="perf-label">LSI</div>
+            <div class="perf-sub">Leading safety index from weighted activity measures.</div>
+          </article>
+        </div>
+        <div class="performance-context">
+          <div class="perf-context-card">
+            <h3>Rolling Inputs</h3>
+            <div class="perf-list">
+              <div class="perf-row"><span>Total recordable injuries</span><strong>${formatWhole(triRolling)}</strong></div>
+              <div class="perf-row"><span>Significant incidents</span><strong>${formatWhole(siRolling)}</strong></div>
+              <div class="perf-row"><span>Critical injuries</span><strong>${formatWhole(ciRolling)}</strong></div>
+              <div class="perf-row"><span>Rolling work hours</span><strong>${formatWhole(rollingHours)}</strong></div>
+            </div>
+          </div>
+        </div>
+      </div></section>`;
+    }
     function renderSummary() {
       const itrRows = panelRows("itrs");
       const incidentRows = panelRows("incidents");
@@ -680,23 +1557,28 @@
         const d = rowDate(row, DATE_FIELDS.hazards);
         return !d || (d >= leadCfg.startDate && d <= leadCfg.endDate);
       });
+      const completedLeadershipRows = completedFieldLeadership(leadershipFlRows);
       const coachedCount = leadershipFlRows.filter(r => String(r.CoachedActivityFlag) === "1").length;
-      return `<div class="insight-grid">
+      return `${safetyPerformanceHtml()}${lsiMonthlySummaryHtml()}<div class="insight-grid">
         <section><h2>Open ITRs</h2><div class="panel">${panelControls("itrs")}${chartBlock("itrs", itrRows, "Open ITRs")}
           <p class="chart-title">Plant areas</p>${barCountsHtml(countByGetter(itrRows, r => r.Tier07FullName || r.IdentifyRectify_Location))}</div></section>
         <section><h2>Incidents and Injuries</h2><div class="panel">${panelControls("incidents")}${chartBlock("incidents", incidentRows, "Incidents")}
           <p class="chart-title">NWR vs work related injuries</p>${barCountsHtml(countByGetter(incidentRows, r => String(r.WorkRelatedInjury || "").toLowerCase() === "yes" ? "Work related injury" : String(r.WorkRelatedInjury || "").toLowerCase() === "no" ? "NWR / not work related" : "Not recorded"))}
-          <p class="chart-title">Incident register</p>${incidentQuickTable(incidentRows)}</div></section>
-        <section><h2>Field Leadership Behaviours</h2><div class="panel">${panelControls("leadership")}
-          <div class="mini-metrics"><div class="mini"><strong>${leadershipRows.length}</strong><span>At-risk behaviours</span></div><div class="mini"><strong>${coachedCount}</strong><span>Coached field leaderships</span></div><div class="mini"><strong>${leadershipHazardRows.length}</strong><span>Hazards in panel range</span></div></div>
+          ${injuryBodyFocusHtml(incidentRows)}</div></section>
+        <section><h2>Field Leadership</h2><div class="panel">${panelControls("leadership")}
+          <div class="mini-metrics"><div class="mini"><strong>${completedLeadershipRows.length}</strong><span>Completed field leaderships</span></div><div class="mini"><strong>${leadershipRows.length}</strong><span>At-risk behaviours</span></div><div class="mini"><strong>${coachedCount}</strong><span>Coached field leaderships</span></div></div>
+          ${leadershipCompletionControl()}
+          <p class="chart-title">Completed field leaderships</p>${barCountsHtml(countByGetter(completedLeadershipRows, leadershipCompletionLabel))}
           ${chartBlock("leadership", leadershipRows, "At-risk")}
           <p class="chart-title">People identifying at-risk behaviours</p>${barCountsHtml(countByGetter(leadershipRows, behaviourIdentifier))}</div></section>
         <section><h2>Action Focus</h2><div class="panel">${panelControls("actions")}${chartBlock("actions", actionRows, "Open actions")}
-          ${actionQuickTable(actionRows.filter(r => r.Status === "Open"))}</div></section>
+          <p class="chart-title">Responsible people</p>${barCountsHtml(countByGetter(actionRows.filter(r => r.Status === "Open"), r => r.ResponsibleName || "Not recorded"))}</div></section>
         <section><h2>Hazard Risk</h2><div class="panel">${panelControls("hazards")}${chartBlock("hazards", hazardRows, "Hazards")}
+          <p class="chart-title">Areas hazards were identified</p>${barCountsHtml(countByGetter(hazardRows, row => row.SpecificLocation || row.Location || row.Tier07FullName || row.Tier06FullName || "Not recorded"))}
           <p class="chart-title">People identifying medium-high risk hazards</p>${barCountsHtml(countByGetter(hazardRows, hazardIdentifier))}</div></section>
         <section><h2>Workplace Inspections</h2><div class="panel">${panelControls("inspections")}${chartBlock("inspections", inspectionRows, "Inspections")}
-          <p class="chart-title">People finding not compliant inspections</p>${barCountsHtml(countByGetter(inspectionRows, inspectionIdentifier))}</div></section>
+          <p class="chart-title">Areas inspected</p>${barCountsHtml(countByGetter(inspectionRows, row => row.SpecificLocation || row.QuestionnaireName))}
+          <p class="chart-title">People completing inspections</p>${barCountsHtml(countByGetter(inspectionRows, inspectionIdentifier))}</div></section>
       </div>`;
     }
     function recordSearchText(row, fields) {
@@ -722,6 +1604,69 @@
         return `<div><p class="chart-title">${escapeHtml(label)}</p><div class="itr-text-box">${escapeHtml(value)}</div></div>`;
       }).join("")}</div>`;
     }
+    function humaniseFieldName(field) {
+      return String(field || "")
+        .replace(/^Key_Employee_/, "")
+        .replace(/^Key_/, "")
+        .replace(/_/g, " ")
+        .replace(/([a-z])([A-Z])/g, "$1 $2")
+        .replace(/\s+/g, " ")
+        .trim();
+    }
+    function displayRecordValue(value) {
+      if (value === null || value === undefined) return "";
+      if (typeof value === "object") return JSON.stringify(value);
+      const text = String(value).trim();
+      if (!text || /^blank$/i.test(text) || /^null$/i.test(text)) return "";
+      if (isSapId(text)) return "";
+      return /date|time/i.test(text) && /^\d{4}-\d{2}-\d{2}T/.test(text) ? text.slice(0,10) : text;
+    }
+    function isPeopleField(field) {
+      return /employee|person|people|team|coach|supervisor|manager|leader|responsible|owner|assigned|entered|identified|completed|closed|inspected|champion|superintendent/i.test(field);
+    }
+    function fieldGridHtml(entries) {
+      if (!entries.length) return "";
+      return `<div class="record-field-grid">${entries.map(([field,value]) => `<div class="record-field"><label>${escapeHtml(humaniseFieldName(field))}</label><div>${escapeHtml(value)}</div></div>`).join("")}</div>`;
+    }
+    function allAvailableFieldsHtml(row, title = "All available fields") {
+      const entries = Object.entries(row)
+        .map(([field,value]) => [field, displayRecordValue(value)])
+        .filter(([field,value]) => value && field !== "FiveWhysPartC_DetailedAnalysisFindings");
+      if (!entries.length) return "";
+      const peopleEntries = entries.filter(([field]) => isPeopleField(field));
+      const otherEntries = entries.filter(([field]) => !isPeopleField(field));
+      otherEntries.sort((a,b) => humaniseFieldName(a[0]).localeCompare(humaniseFieldName(b[0])));
+      return `<details class="record-explorer">
+        <summary>${escapeHtml(title)} (${entries.length} fields)</summary>
+        ${peopleEntries.length ? `<div class="record-section-title">People, responsibility and team fields</div>${fieldGridHtml(peopleEntries)}` : ""}
+        <div class="record-section-title">Other record fields</div>
+        ${fieldGridHtml(otherEntries)}
+      </details>`;
+    }
+    function relatedActionCards(rows, title = "Related actions") {
+      if (!rows.length) return "";
+      const cards = rows.slice(0,10).map(row => `<div class="related-card">
+        <div class="related-head"><span>${escapeHtml(row.Action_BK || row.Key_Action || "Action")}</span><span>${escapeHtml(row.Status || "Not recorded")}</span></div>
+        <div class="related-meta">Due ${escapeHtml(simpleDate(row.DueDate) || "Not recorded")} | Responsible: ${escapeHtml(row.ResponsibleName || "Not recorded")} | Criticality: ${escapeHtml(row.Criticality || "Not recorded")}</div>
+        <div class="related-desc">${escapeHtml(row.Title || row.DetailedDescription || "No action description recorded.")}</div>
+      </div>`).join("");
+      return `<div><p class="chart-title">${escapeHtml(title)} (${rows.length})</p><div class="related-list">${cards}</div></div>`;
+    }
+    function linkedActionsFor(field, key) {
+      if (!key) return [];
+      return departmentScoped("actions").filter(row => row[field] === key)
+        .sort((a,b) => String(a.DueDate || "").localeCompare(String(b.DueDate || "")));
+    }
+    function relatedBehaviourCards(fieldLeadershipId) {
+      const rows = atRiskBehaviours(departmentScoped("behaviours")).filter(row => row.Key_FieldLeadership === fieldLeadershipId);
+      if (!rows.length) return "";
+      const cards = rows.slice(0,12).map(row => `<div class="related-card">
+        <div class="related-head"><span>${escapeHtml(row.Category || "At-risk behaviour")}</span><span>${escapeHtml(row.PotentialConsequence || "")}</span></div>
+        <div class="related-meta">${escapeHtml(row.Subcategory || "Not recorded")} | Coach: ${escapeHtml(row.FieldLeadershipCoachName || "Not recorded")}</div>
+        <div class="related-desc">${escapeHtml(row.BehaviourDescription || row.SuggestedImprovement || "No behaviour detail recorded.")}</div>
+      </div>`).join("");
+      return `<div><p class="chart-title">Linked at-risk behaviours (${rows.length})</p><div class="related-list">${cards}</div></div>`;
+    }
     function friendlyCards(rows, config) {
       const search = state.tableSearch.toLowerCase();
       const filteredRows = rows.filter(row => !search || recordSearchText(row, config.searchFields).includes(search));
@@ -737,7 +1682,7 @@
           <summary class="itr-card-head">
             <div>
               <div class="itr-summary-line">
-                <div class="itr-summary-item"><label>${escapeHtml(config.idLabel)}</label><div class="itr-id">${escapeHtml(id)}</div><div class="muted">${escapeHtml(config.subId ? config.subId(row) : "")}</div></div>
+                <div class="itr-summary-item"><label>${escapeHtml(config.idLabel)}</label><div class="itr-id">${escapeHtml(id)}</div><div class="muted">${escapeHtml(config.subId ? config.subId(row) : "")}</div>${recordLinkHtml(row, config)}</div>
                 ${config.summaryFields.map(([label, getter]) => {
                   const value = typeof getter === "function" ? getter(row) : row[getter];
                   return `<div class="itr-summary-item"><label>${escapeHtml(label)}</label>${escapeHtml(value || "Not recorded")}</div>`;
@@ -752,6 +1697,7 @@
             ${detailFieldsHtml(config.detailFields, row)}
             ${detailTextHtml(config.textBlocks, row)}
             ${config.extra ? config.extra(row) : ""}
+            ${allAvailableFieldsHtml(row)}
           </div>
         </details>`;
       }).join("");
@@ -767,21 +1713,45 @@
           <input id="tableSearch" type="search" placeholder="Search this section" value="${escapeHtml(state.tableSearch)}" />
           <button id="sectionDateSort" type="button" class="date-sort-button">${escapeHtml(dateLabel)} ${dir === "asc" ? "▲" : "▼"}</button>
         </div>
-        <div class="muted" style="margin-bottom:10px">${count} records shown for ${escapeHtml(state.department)}</div>`;
+        <div class="muted" style="margin-bottom:10px">${count} records shown for ${escapeHtml(selectedDepartmentLabel())}</div>`;
     }
     function renderIncidentsSection() {
       const rows = filtered("incidents");
       const nwr = rows.filter(row => String(row.WorkRelatedInjury || "").toLowerCase() === "no").length;
       const wr = rows.filter(row => String(row.WorkRelatedInjury || "").toLowerCase() === "yes").length;
+      const incidentIds = new Set(rows.map(row => row.Incident_BK).filter(Boolean));
+      const incidentActionRows = departmentScoped("actions").filter(row => incidentIds.has(row.Key_Incident));
+      const incidentActionControlLabel = row => displayValue(row.Category || row.CompletionCategory || row.Discipline || "Not recorded") || "Not recorded";
       const cfg = {
         idLabel:"Incident", dateField:"IncidentDate",
         id: row => row.Incident_BK, subId: row => simpleDate(row.IncidentDate),
         status: row => row.Status || "Not recorded",
         preview: row => row.BriefDescription, previewLabel:"Brief",
-        searchFields:["Incident_BK","Status","IncidentClassification","Consequence","BriefDescription","IncidentLocation","RiskRating","WorkRelatedInjury","InjuryClassification","ResponsibleCompany"],
-        summaryFields:[["Date", row => simpleDate(row.IncidentDate)],["Classification","IncidentClassification"],["Risk","RiskRating"],["Location","IncidentLocation"],["Work related","WorkRelatedInjury"]],
-        detailFields:[["Status","Status"],["Classification","IncidentClassification"],["Consequence","Consequence"],["Risk","RiskRating"],["Work related","WorkRelatedInjury"],["Injury","InjuryClassification"],["Location","IncidentLocation"],["Responsible company","ResponsibleCompany"]],
-        textBlocks:[["Brief description","BriefDescription"],["Energy release","EnergyRelease"],["Injury behavioural category","InjuryBehaviouralCategory"]]
+        searchFields:["Incident_BK","Status","IncidentClassification","IncidentClassificationsAll","Consequence","BriefDescription","IncidentLocation","RiskRating","WorkRelatedInjury","InjuryClassification","ResponsibleCompany","Employee_ReportedBy_Name","Employee_ReportedTo_Name","Employee_IncidentOwner_Name","Employee_AnalysisTeamLeader_Name","FiveWhysAnalysisTriggered","InvestigationTypes","ImmediateActionTaken","PartE_IncidentOutcomeFindings","IncidentDetailedDescription"],
+        summaryFields:[["Date", row => simpleDate(row.IncidentDate)],["Classification", row => row.IncidentClassificationsAll || row.IncidentClassification],["Risk","RiskRating"],["Location","IncidentLocation"],["Work related","WorkRelatedInjury"]],
+        detailFields:[
+          ["Reported by","Employee_ReportedBy_Name"],
+          ["Reported to","Employee_ReportedTo_Name"],
+          ["Incident owner","Employee_IncidentOwner_Name"],
+          ["Analysis team leader","Employee_AnalysisTeamLeader_Name"],
+          ["All incident classifications", row => row.IncidentClassificationsAll || row.IncidentClassification],
+          ["Classification count","IncidentClassificationCount"],
+          ["5 Whys analysis triggered","FiveWhysAnalysisTriggered"],
+          ["Investigation type","InvestigationTypes"],
+          ["Formal investigation","FormalInvestigationFlag"],
+          ["Direct line leader notified","DirectLineLeaderNotifiedFlag"],
+          ["Status","Status"],["Classification","IncidentClassification"],["Consequence","Consequence"],["Risk","RiskRating"],["Work related","WorkRelatedInjury"],["Injury","InjuryClassification"],["Location","IncidentLocation"],["Responsible company","ResponsibleCompany"]
+        ],
+        textBlocks:[
+          ["Brief description","BriefDescription"],
+          ["Immediate action taken","ImmediateActionTaken"],
+          ["Part E - incident outcome and findings","PartE_IncidentOutcomeFindings"],
+          ["Incident detailed description","IncidentDetailedDescription"],
+          ["Energy release","EnergyRelease"],
+          ["Injury behavioural category","InjuryBehaviouralCategory"],
+          ["Injury behavioural subcategory","InjuryBehaviouralSubcategory"]
+        ],
+        extra: row => relatedActionCards(linkedActionsFor("Key_Incident", row.Incident_BK), "Actions linked to this incident")
       };
       const cards = friendlyCards(rows, cfg);
       return `<section><h2>Incidents and Injuries</h2>
@@ -789,6 +1759,7 @@
           <section><h2>Incident Mix</h2>${barCountsHtml(countByGetter(rows, row => row.IncidentClassification))}</section>
           <section><h2>Work Related</h2>${donutHtml(rows, "WorkRelatedInjury", "Incidents")}</section>
           <section><h2>Injury / Risk Focus</h2>${barCountsHtml(countByGetter(rows, row => row.RiskRating))}${metricStrip([["Work related", wr],["NWR", nwr],["Open", rows.filter(row => String(row.Status).toLowerCase() === "open").length]])}</section>
+          <section><h2>Incident Action Control Hierarchy</h2>${barCountsHtml(countByGetter(incidentActionRows, incidentActionControlLabel))}${metricStrip([["Linked actions", incidentActionRows.length],["Open", incidentActionRows.filter(row => String(row.Status).toLowerCase() === "open").length],["Closed", incidentActionRows.filter(row => String(row.Status).toLowerCase() === "closed").length]])}</section>
         </div>
         ${sectionToolbar("Incident Register", "Incident date", cards.count)}
         <div class="itr-register">${cards.html}</div>
@@ -796,6 +1767,7 @@
     }
     function renderFieldLeadershipSection() {
       const flRows = filtered("fieldLeadership");
+      const completedRows = completedFieldLeadership(flRows);
       const behaviourRows = atRiskBehaviours(filtered("behaviours"));
       const coached = flRows.filter(row => String(row.CoachedActivityFlag) === "1").length;
       const cfg = {
@@ -803,17 +1775,19 @@
         id: row => row.FieldLeadership_BK, subId: row => simpleDate(row.FieldLeadershipDate),
         status: row => row.FieldLeadershipStatus || "Recorded",
         preview: row => row.DescriptionComments || row.CoachComments, previewLabel:"Observation",
-        searchFields:["FieldLeadership_BK","FieldLeadershipType","FieldLeadershipStatus","ActivityTypeObserved","ProcedureObserved","DescriptionComments","CoachComments","ReportingSite","Tier06FullName","Tier07FullName"],
-        summaryFields:[["Date", row => simpleDate(row.FieldLeadershipDate)],["Type","FieldLeadershipType"],["Status","FieldLeadershipStatus"],["Area","Tier07FullName"],["At-risk count","AtRiskBehaviourCount"]],
-        detailFields:[["Type","FieldLeadershipType"],["Status","FieldLeadershipStatus"],["Activity observed","ActivityTypeObserved"],["Procedure observed","ProcedureObserved"],["Coached","CoachedActivityFlag"],["At-risk count","AtRiskBehaviourCount"],["Reporting site","ReportingSite"],["Area","Tier07FullName"]],
-        textBlocks:[["Description comments","DescriptionComments"],["Coach comments","CoachComments"]]
+        searchFields:["FieldLeadership_BK","FieldLeadershipType","FieldLeadershipStatus","FieldLeadershipCoachFullName","ActivityTypeObserved","ProcedureObserved","DescriptionComments","CoachComments","ReportingSite","Tier06FullName","Tier07FullName"],
+        summaryFields:[["Date", row => simpleDate(row.FieldLeadershipDate)],["Completed by", fieldLeadershipIdentifier],["Type","FieldLeadershipType"],["Status","FieldLeadershipStatus"],["Location", fieldLeadershipLocation],["At-risk count","AtRiskBehaviourCount"]],
+        detailFields:[["Completed by", fieldLeadershipIdentifier],["Type","FieldLeadershipType"],["Status","FieldLeadershipStatus"],["Activity observed","ActivityTypeObserved"],["Procedure observed","ProcedureObserved"],["Coached","CoachedActivityFlag"],["At-risk count","AtRiskBehaviourCount"],["Reporting site","ReportingSite"],["Location", fieldLeadershipLocation],["Department","Tier05FullName"]],
+        textBlocks:[["Description comments","DescriptionComments"],["Coach comments","CoachComments"]],
+        extra: row => `${relatedBehaviourCards(row.FieldLeadership_BK)}${relatedActionCards(linkedActionsFor("Key_FieldLeadership", row.FieldLeadership_BK), "Actions linked to this field leadership")}`
       };
       const cards = friendlyCards(flRows, cfg);
       return `<section><h2>Field Leadership</h2>
-        <div class="itr-summary">
-          <section><h2>Leadership Activity</h2>${barCountsHtml(countByGetter(flRows, row => row.FieldLeadershipType))}</section>
+        <div class="itr-summary field-leadership-summary">
+          <section><h2>Completed Field Leaderships</h2>${leadershipCompletionControl()}${barCountsHtml(countByGetter(completedRows, leadershipCompletionLabel))}</section>
           <section><h2>At-Risk Behaviours</h2>${donutHtml(behaviourRows, "Category", "At-risk")}</section>
-          <section><h2>People Identifying At-Risk</h2>${barCountsHtml(countByGetter(behaviourRows, behaviourIdentifier))}${metricStrip([["Field leaderships", flRows.length],["Coached", coached],["At-risk behaviours", behaviourRows.length]])}</section>
+          <section><h2>People Identifying At-Risk</h2>${barCountsHtml(countByGetter(behaviourRows, behaviourIdentifier))}${metricStrip([["Completed", completedRows.length],["Coached", coached],["At-risk behaviours", behaviourRows.length]])}</section>
+          <section class="wide-card"><h2>Monthly Leadership KPI Tracker</h2>${monthlyLeadershipKpiHtml()}</section>
         </div>
         ${sectionToolbar("Field Leadership Register", "FL date", cards.count)}
         <div class="itr-register">${cards.html}</div>
@@ -821,6 +1795,7 @@
     }
     function renderActionsSection() {
       const rows = openActions(filtered("actions"));
+      const actionControlLabel = row => displayValue(row.Category || row.Discipline || "Not recorded") || "Not recorded";
       const cfg = {
         idLabel:"Action", dateField:"DueDate",
         id: row => row.Action_BK, subId: row => row.SourceType || "",
@@ -829,14 +1804,15 @@
         searchFields:["Action_BK","Status","Title","DueDate","DaysUntilDue","DueBucket","ResponsibleName","AssignedByName","Discipline","Category","Criticality","Location","SourceType","DetailedDescription","NotificationNumber","WorkOrderNumber"],
         summaryFields:[["Due", row => simpleDate(row.DueDate)],["Days until due","DaysUntilDue"],["Responsible","ResponsibleName"],["Criticality","Criticality"],["Source","SourceType"]],
         detailFields:[["Status","Status"],["Due date", row => simpleDate(row.DueDate)],["Days until due","DaysUntilDue"],["Responsible","ResponsibleName"],["Assigned by","AssignedByName"],["Criticality","Criticality"],["Discipline","Discipline"],["Category","Category"],["Location","Location"],["Source type","SourceType"],["Notification","NotificationNumber"],["Work order","WorkOrderNumber"]],
-        textBlocks:[["Title","Title"],["Detailed description","DetailedDescription"]]
+        textBlocks:[["Title","Title"],["Detailed description","DetailedDescription"],["Completion comments","CompletionComments"]]
       };
       const cards = friendlyCards(rows, cfg);
       return `<section><h2>Actions</h2>
-        <div class="itr-summary">
+        <div class="itr-summary actions-summary">
           <section><h2>Due Focus</h2>${barCountsHtml(countByGetter(rows, row => row.DueBucket))}</section>
           <section><h2>Responsible People</h2>${barCountsHtml(countByGetter(rows, row => row.ResponsibleName))}</section>
           <section><h2>Criticality</h2>${donutHtml(rows, "Criticality", "Open actions")}${metricStrip([["Open actions", rows.length],["Overdue", rows.filter(row => row.DueBucket === "Overdue").length],["Due next 7 days", rows.filter(row => row.DueBucket === "Due next 7 days").length]])}</section>
+          <section><h2>Action Control Hierarchy</h2>${barCountsHtml(countByGetter(rows, actionControlLabel))}${metricStrip([["Categories", new Set(rows.map(actionControlLabel).filter(label => label !== "Not recorded")).size],["Administration", rows.filter(row => actionControlLabel(row).toLowerCase().includes("administration")).length],["Engineering", rows.filter(row => actionControlLabel(row).toLowerCase().includes("engineering")).length]])}</section>
         </div>
         ${sectionToolbar("Open Action Register", "Due date", cards.count)}
         <div class="itr-register">${cards.html}</div>
@@ -844,6 +1820,9 @@
     }
     function renderHazardsSection() {
       const rows = mediumHighHazards(filtered("hazards"));
+      const hazardIds = new Set(rows.map(row => row.Hazard_BK).filter(Boolean));
+      const hazardActionRows = departmentScoped("actions").filter(row => hazardIds.has(row.Key_Hazard));
+      const hazardActionControlLabel = row => displayValue(row.Category || row.CompletionCategory || row.Discipline || "Not recorded") || "Not recorded";
       const cfg = {
         idLabel:"Hazard", dateField:"HazardIdentificationDate",
         id: row => row.Hazard_BK, subId: row => simpleDate(row.HazardIdentificationDate),
@@ -852,7 +1831,8 @@
         searchFields:["Hazard_BK","HazardIdentificationDate","Status","RiskRating","Consequence","Likelihood","HazardType","HazardSubType","Location","SpecificHazardLocation","BriefDescription","DetailedDescription","RecommendedCorrectiveAction","ImmediateActionTaken","Discipline","HazardReportedByName","HazardEnteredByName","HazardOwnerName"],
         summaryFields:[["Identified", row => simpleDate(row.HazardIdentificationDate)],["Risk","RiskRating"],["Identified by", hazardIdentifier],["Location","Location"],["Type","HazardType"]],
         detailFields:[["Status","Status"],["Risk","RiskRating"],["Consequence","Consequence"],["Likelihood","Likelihood"],["Hazard type","HazardType"],["Sub-type","HazardSubType"],["Identified by", hazardIdentifier],["Owner","HazardOwnerName"],["Location","Location"],["Specific location","SpecificHazardLocation"],["Discipline","Discipline"]],
-        textBlocks:[["Brief description","BriefDescription"],["Detailed description","DetailedDescription"],["Recommended corrective action","RecommendedCorrectiveAction"],["Immediate action taken","ImmediateActionTaken"]]
+        textBlocks:[["Brief description","BriefDescription"],["Detailed description","DetailedDescription"],["Recommended corrective action","RecommendedCorrectiveAction"],["Immediate action taken","ImmediateActionTaken"]],
+        extra: row => relatedActionCards(linkedActionsFor("Key_Hazard", row.Hazard_BK), "Actions linked to this hazard")
       };
       const cards = friendlyCards(rows, cfg);
       return `<section><h2>Hazards</h2>
@@ -860,31 +1840,38 @@
           <section><h2>Risk Rating</h2>${barCountsHtml(countByGetter(rows, row => row.RiskRating))}</section>
           <section><h2>People Identifying Hazards</h2>${barCountsHtml(countByGetter(rows, hazardIdentifier))}</section>
           <section><h2>Locations</h2>${barCountsHtml(countByGetter(rows, row => row.Location || row.SpecificHazardLocation))}${metricStrip([["Medium-high hazards", rows.length],["Open", rows.filter(row => String(row.Status).toLowerCase() === "open").length],["High", rows.filter(row => String(row.RiskRating || "").toUpperCase().includes("HIGH")).length]])}</section>
+          <section><h2>Hazard Action Control Hierarchy</h2>${barCountsHtml(countByGetter(hazardActionRows, hazardActionControlLabel))}${metricStrip([["Linked actions", hazardActionRows.length],["Open", hazardActionRows.filter(row => String(row.Status).toLowerCase() === "open").length],["Closed", hazardActionRows.filter(row => String(row.Status).toLowerCase() === "closed").length]])}</section>
         </div>
         ${sectionToolbar("Medium-High Hazard Register", "Identified date", cards.count)}
         <div class="itr-register">${cards.html}</div>
       </section>`;
     }
     function renderInspectionsSection() {
-      const rows = nonCompliantInspections(filtered("inspections"));
+      const completedRows = completedInspections(filtered("inspections"));
+      const notCompliantRows = nonCompliantInspections(completedRows);
       const cfg = {
         idLabel:"Inspection", dateField:"InspectionDate",
         id: row => row.WorkplaceInspections_BK, subId: row => simpleDate(row.InspectionDate),
-        status: row => row.QuestionnaireResult || "Not compliant",
+        status: row => row.QuestionnaireResult || "Completed",
         preview: row => row.ClosureComment || row.QuestionnaireName, previewLabel:"Inspection",
-        searchFields:["WorkplaceInspections_BK","InspectionDate","Closed","CloseDate","InspectionInspectedByName","QuestionnaireName","QuestionnaireResult","SpecificLocation","ClosureComment"],
-        summaryFields:[["Date", row => simpleDate(row.InspectionDate)],["Inspected by","InspectionInspectedByName"],["Result","QuestionnaireResult"],["Location","SpecificLocation"],["Closed","Closed"]],
-        detailFields:[["Inspection date", row => simpleDate(row.InspectionDate)],["Inspected by","InspectionInspectedByName"],["Result","QuestionnaireResult"],["Questionnaire","QuestionnaireName"],["Score","QuestionnaireScore"],["Percentage","QuestionnairePercentage"],["Specific location","SpecificLocation"],["Closed","Closed"],["Close date", row => simpleDate(row.CloseDate)],["Closed by","InspectionClosedByName"],["Area superintendent","InspectionAreaSuperintendentName"]],
+        searchFields:["WorkplaceInspections_BK","InspectionDate","Closed","CloseDate","InspectionInspectedByName","InspectionClosedByName","InspectionAreaSuperintendentName","QuestionnaireName","QuestionnaireResult","SpecificLocation","ClosureComment","Tier05FullName"],
+        summaryFields:[["Date", row => simpleDate(row.InspectionDate)],["Completed by","InspectionInspectedByName"],["Result","QuestionnaireResult"],["Area","SpecificLocation"],["Department","Tier05FullName"]],
+        detailFields:[["Inspection date", row => simpleDate(row.InspectionDate)],["Completed by","InspectionInspectedByName"],["Result","QuestionnaireResult"],["Questionnaire","QuestionnaireName"],["Score","QuestionnaireScore"],["Percentage","QuestionnairePercentage"],["Specific location","SpecificLocation"],["Closed","Closed"],["Close date", row => simpleDate(row.CloseDate)],["Closed by","InspectionClosedByName"],["Area superintendent","InspectionAreaSuperintendentName"],["Department","Tier05FullName"]],
         textBlocks:[["Closure comment","ClosureComment"]]
       };
-      const cards = friendlyCards(rows, cfg);
+      const cards = friendlyCards(completedRows, cfg);
       return `<section><h2>Workplace Inspections</h2>
         <div class="itr-summary">
-          <section><h2>Not Compliant Results</h2>${donutHtml(rows, "QuestionnaireResult", "Inspections")}</section>
-          <section><h2>People Finding Issues</h2>${barCountsHtml(countByGetter(rows, inspectionIdentifier))}</section>
-          <section><h2>Locations</h2>${barCountsHtml(countByGetter(rows, row => row.SpecificLocation))}${metricStrip([["Not compliant", rows.length],["Closed", rows.filter(row => String(row.Closed).toLowerCase() === "yes").length],["Open", rows.filter(row => String(row.Closed).toLowerCase() !== "yes").length]])}</section>
+          <section><h2>Completion Results</h2>${donutHtml(completedRows, "QuestionnaireResult", "Completed")}</section>
+          <section><h2>Areas Inspected</h2>${barCountsHtml(countByGetter(completedRows, row => row.SpecificLocation || row.QuestionnaireName))}</section>
+          <section><h2>People Completing Inspections</h2>${barCountsHtml(countByGetter(completedRows, inspectionIdentifier))}${metricStrip([["Completed", completedRows.length],["Not compliant", notCompliantRows.length],["Open", completedRows.filter(row => String(row.Closed).toLowerCase() !== "yes").length]])}</section>
         </div>
-        ${sectionToolbar("Not Compliant Inspection Register", "Inspection date", cards.count)}
+        <div class="itr-summary">
+          <section><h2>Not Compliant Results</h2>${donutHtml(notCompliantRows, "QuestionnaireResult", "Exceptions")}</section>
+          <section><h2>Not Compliant Areas</h2>${barCountsHtml(countByGetter(notCompliantRows, row => row.SpecificLocation || row.QuestionnaireName))}</section>
+          <section><h2>People Finding Issues</h2>${barCountsHtml(countByGetter(notCompliantRows, inspectionIdentifier))}</section>
+        </div>
+        ${sectionToolbar("Completed Workplace Inspection Register", "Inspection date", cards.count)}
         <div class="itr-register">${cards.html}</div>
       </section>`;
     }
@@ -914,6 +1901,13 @@
         </tbody></table></div>
         <div class="muted">${rows.length > 500 ? "Showing first 500 rows. Narrow the date range or search to reduce the list." : ""}</div>
       </section>`;
+    }
+    function applyTextTooltips() {
+      const selectors = [".bar-label", ".legend-row span:nth-child(2)", ".metric .name", ".metric .note", ".mini span", ".itr-field", ".itr-text-box", ".record-title", ".record-preview", "td", ".body-row span", ".perf-sub"];
+      document.querySelectorAll(selectors.join(",")).forEach(el => {
+        const text = (el.textContent || "").replace(/\s+/g, " ").trim();
+        if (text && !el.getAttribute("title")) el.setAttribute("title", text);
+      });
     }
     function renderActiveSection() {
       const container = document.getElementById("sections");
@@ -1031,28 +2025,72 @@
         container.innerHTML = `<div class="section active">${renderTable(TABLES[state.section])}</div>`;
         document.getElementById("tableSearch").addEventListener("input", event => { state.tableSearch = event.target.value; renderActiveSection(); });
       }
+      document.querySelectorAll("[data-leadership-completion-split]").forEach(select => select.addEventListener("change", event => {
+        state.leadershipCompletionSplit = event.target.value;
+        renderActiveSection();
+      }));
+      document.querySelectorAll("[data-leadership-kpi-start-month]").forEach(input => input.addEventListener("change", event => {
+        state.leadershipKpiStartMonth = event.target.value;
+        if (state.leadershipKpiEndMonth && state.leadershipKpiEndMonth < state.leadershipKpiStartMonth) state.leadershipKpiEndMonth = state.leadershipKpiStartMonth;
+        renderActiveSection();
+      }));
+      document.querySelectorAll("[data-leadership-kpi-end-month]").forEach(input => input.addEventListener("change", event => {
+        state.leadershipKpiEndMonth = event.target.value;
+        if (state.leadershipKpiStartMonth && state.leadershipKpiStartMonth > state.leadershipKpiEndMonth) state.leadershipKpiStartMonth = state.leadershipKpiEndMonth;
+        renderActiveSection();
+      }));
+      document.querySelectorAll("[data-lsi-start-month]").forEach(input => input.addEventListener("change", event => {
+        state.lsiStartMonth = event.target.value;
+        if (state.lsiEndMonth && state.lsiEndMonth < state.lsiStartMonth) state.lsiEndMonth = state.lsiStartMonth;
+        renderActiveSection();
+      }));
+      document.querySelectorAll("[data-lsi-end-month]").forEach(input => input.addEventListener("change", event => {
+        state.lsiEndMonth = event.target.value;
+        if (state.lsiStartMonth && state.lsiStartMonth > state.lsiEndMonth) state.lsiStartMonth = state.lsiEndMonth;
+        renderActiveSection();
+      }));
+      applyTextTooltips();
     }
     function renderTabs() {
       document.getElementById("tabs").innerHTML = SECTIONS.map(([id,label]) => `<button type="button" class="tab ${id===state.section ? "active" : ""}" data-section="${id}">${escapeHtml(label)}</button>`).join("");
       document.querySelectorAll(".tab").forEach(btn => btn.addEventListener("click", () => { state.section = btn.dataset.section; state.tableSearch = ""; render(); }));
     }
     function departmentShortName(name) {
+      if (name === "All departments") return "All Departments";
       return String(name || "").replace(/^Iron Bridge\s*/i, "").trim() || "OPF Operations";
     }
+    function combinedDepartmentShortName() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      if (selected.includes("All departments")) return "All Departments";
+      if (selected.length === 1) return departmentShortName(selected[0]);
+      return `${selected.length} Departments`;
+    }
     function renderDepartments() {
+      const selected = state.departments && state.departments.length ? state.departments : [state.department || "Iron Bridge OPF Operations"];
+      const selectedSet = new Set(selected);
       document.getElementById("departmentList").innerHTML = DEPARTMENTS.map(name => `
-        <button type="button" class="department-button ${name === state.department ? "active" : ""}" data-department="${escapeHtml(name)}">
-          ${escapeHtml(name.replace(/^Iron Bridge\s*/i, ""))}
+        <button type="button" class="department-button ${selectedSet.has(name) ? "active" : ""}" data-department="${escapeHtml(name)}" title="Click to select one department. Ctrl+click to combine departments.">
+          ${escapeHtml(name === "All departments" ? name : name.replace(/^Iron Bridge\s*/i, ""))}
         </button>`).join("");
-      document.querySelectorAll(".department-list .department-button").forEach(button => button.addEventListener("click", () => {
-        state.department = button.dataset.department;
+      document.querySelectorAll(".department-list .department-button").forEach(button => button.addEventListener("click", event => {
+        const name = button.dataset.department;
+        const multi = event.ctrlKey || event.metaKey;
+        if (name === "All departments" || !multi) {
+          state.departments = [name];
+        } else {
+          const next = new Set((state.departments || []).filter(item => item !== "All departments"));
+          if (next.has(name)) next.delete(name);
+          else next.add(name);
+          state.departments = next.size ? [...next] : [name];
+        }
+        state.department = state.departments[0];
         state.tableSearch = "";
         state.itrSearch = "";
         render();
       }));
-      const shortName = departmentShortName(state.department);
-      document.getElementById("dashboardTitle").textContent = `Iron Bridge | ${shortName} Safety Dashboard`;
-      document.getElementById("topbarTitle").textContent = `${shortName} Safety Dashboard`;
+      const shortName = combinedDepartmentShortName();
+      document.getElementById("dashboardTitle").textContent = "Iron Bridge Operational Safety Intelligence";
+      document.getElementById("topbarTitle").textContent = selected.includes("All departments") ? "All Departments" : `${shortName}`;
     }
     function syncDateControls() {
       document.getElementById("startDate").min = MIN_DATE; document.getElementById("startDate").max = MAX_DATE;
@@ -1062,15 +2100,32 @@
       document.getElementById("startRange").value = dateOffset(state.startDate); document.getElementById("endRange").value = dateOffset(state.endDate);
       document.querySelectorAll(".preset").forEach(button => button.classList.toggle("active", button.dataset.preset === state.preset));
     }
+    function refreshedAtDate() {
+      return parseDateTime(SNAPSHOT.generatedAt) || toDate(MAX_DATE);
+    }
     function setDateRange(start, end, preset="custom") {
       let s = clampDate(start), e = clampDate(end); if (s > e) [s,e] = [e,s];
       state.startDate = s; state.endDate = e; state.preset = preset;
+      if (preset === "last24") {
+        const endTime = refreshedAtDate();
+        const startTime = new Date(endTime.getTime() - 24 * 60 * 60 * 1000);
+        state.startDateTime = startTime;
+        state.endDateTime = endTime;
+        state.startDate = clampDate(isoDate(startTime));
+        state.endDate = clampDate(isoDate(endTime));
+        s = state.startDate;
+        e = state.endDate;
+      } else {
+        state.startDateTime = null;
+        state.endDateTime = null;
+      }
       Object.keys(state.panels).forEach(panel => { state.panels[panel].startDate = s; state.panels[panel].endDate = e; });
       syncDateControls(); render();
     }
     function presetRange(preset) {
-      const end = MAX_DATE; const endDate = toDate(end);
-      if (preset === "last24") return [end,end];
+      const end = preset === "last24" ? clampDate(isoDate(refreshedAtDate())) : MAX_DATE;
+      const endDate = toDate(end);
+      if (preset === "last24") return [clampDate(isoDate(new Date(refreshedAtDate().getTime() - 24 * 60 * 60 * 1000))), end];
       if (preset === "last7") return [addDays(end,-6),end];
       if (preset === "mtd") return [isoDate(new Date(endDate.getFullYear(), endDate.getMonth(), 1)), end];
       if (preset === "ytd") return [isoDate(new Date(endDate.getFullYear(), 0, 1)), end];
@@ -1078,7 +2133,11 @@
       if (preset === "fytd") return [isoDate(new Date(endDate.getMonth() >= 6 ? endDate.getFullYear() : endDate.getFullYear()-1, 6, 1)), end];
       return [state.startDate, state.endDate];
     }
-    function render() { renderTabs(); renderDepartments(); renderMetrics(); renderActiveSection(); }
+    function render() {
+      document.getElementById("dataRefreshedAt").textContent = formatDataRefreshedAt(SNAPSHOT.generatedAt);
+      renderTabs(); renderDepartments(); renderMetrics(); renderActiveSection();
+      applyTextTooltips();
+    }
     document.getElementById("startDate").addEventListener("change", e => setDateRange(e.target.value, state.endDate));
     document.getElementById("endDate").addEventListener("change", e => setDateRange(state.startDate, e.target.value));
     document.getElementById("startRange").addEventListener("input", e => setDateRange(addDays(MIN_DATE, Number(e.target.value)), state.endDate));
